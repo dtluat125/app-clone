@@ -1,0 +1,116 @@
+.secondary-view-container{
+    display: none;
+    
+}
+.secondary-view-container.resize{
+    user-select: none;
+}
+.secondary-view-container.active{
+    --saf-0: rgba(var(--sk_foreground_low,29,28,29),0.13);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--saf-0);
+}
+
+
+.secondary-view__header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.33334;
+    min-width: 300px;
+    box-shadow: 0 1px 0 0 var(--saf-0);
+    
+}
+
+.secondary-view__header__left > span{
+    display: flex;
+    align-items: baseline;
+    font-size: 18px;
+    font-weight: 900;
+    margin: 10px;
+
+}
+
+.secondary-view__header__right{
+    display: flex;
+    margin-right: 10px;
+}
+.secondary-view__header__right button{
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    background: inherit;
+    transition: all 0.3s;
+    border-radius: 5px;
+}
+.secondary-view__header__right button:hover{
+    background: rgb(170, 170, 170)!important;
+}
+
+.secondary-view__body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    flex-grow: 10;
+}
+
+.member-profile__avatar-container{
+    margin: 16px;
+    max-width: 256px;
+    max-height: 256px;
+}
+
+.member-profile__avatar-container > img{
+    max-width: 256px;
+    max-height: 256px;
+}
+
+.member-profile__name{
+    margin: 0 16px;
+    text-align: center;
+    display: flex;
+}
+
+.member-profile__name-title{
+    font-size: 18px;
+    line-height: 1.33334;
+    font-weight: 900;
+    margin-bottom: 2px;
+}
+.member-profile__status .status{
+    font-size: 15px;
+}
+
+.member-profile__status .status.offline{
+    color: rgba(99, 98, 98, 0.445);  
+}
+
+.member-profile__status .status.online{
+    color: rgb(1, 163, 1);  
+}
+
+.member-profile__fields{
+    margin-top: 16px;
+    align-self: stretch;
+    flex-grow: 10;
+}
+
+.member-profile__field{
+    position: relative;
+    display: flex;
+    padding: 8px 16px;
+    flex-direction: column;
+}
+
+.member-profile__field__label{
+    font-size: 13px;
+    line-height: 1.38463;
+    color: rgba(var(--sk_foreground_max,29,28,29),.7);
+    font-weight: 700;
+}
+
+.member-profile__field__value{
+    text-overflow: ellipsis;
+}
