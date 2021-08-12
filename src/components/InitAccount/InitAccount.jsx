@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "../../css/setuppage.css";
-import { reset, saveUserInfo, selectDocId, selectUser } from "../../features/appSlice";
+import {
+  reset,
+  saveUserInfo,
+  selectDocId,
+  selectUser,
+} from "../../features/appSlice";
 import { auth, db, storage } from "../../firebase";
 import SmallLoader from "../SmallLoader";
 function InitAccount() {
@@ -24,6 +29,7 @@ function InitAccount() {
     await fileRef.put(file);
     setImgURL(await fileRef.getDownloadURL());
     setLoading(false);
+    console.log(imgURL)
   };
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -82,14 +88,18 @@ function InitAccount() {
   };
   useEffect(() => {
     if (onSave) {
-      saveChange();
-      if (name === "" || job === "")
+      if (name === "" || job === "") {
         setNotif("You have to fill the information!");
-      if (imgURL === "") setNotif("You have to upload an image!");
+        return;
+      }
+      if (imgURL === "") {
+        setNotif("You have to upload an image!");
+        return;
+      }
+      saveChange();
     }
     return () => {
       setOnSave(false);
-      setNotif("");
     };
   }, [onSave]);
   // Sign Out
@@ -181,7 +191,9 @@ function InitAccount() {
             Proceed to the server
           </button>
         </div>
-        <div className="notif-container"><strong>{notif}</strong></div>
+        <div className="notif-container">
+          <strong>{notif}</strong>
+        </div>
       </div>
     </div>
   );

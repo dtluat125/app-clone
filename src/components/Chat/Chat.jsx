@@ -250,8 +250,8 @@ function Chat() {
             </div>
             <div
               className="chat__header__right"
-              data-bs-toggle={roomId ? "modal" : ""}
-              data-bs-target={roomId ? "#" + "a" + roomId : ""}
+              data-bs-toggle={(roomId||roomDirectId) ? "modal" : ""}
+              data-bs-target={(roomId||roomDirectId) ? "#" + "a" + (roomId?roomId:roomDirectId) : ""}
             >
               <span role="button">Details</span>
             </div>

@@ -34,7 +34,9 @@
   }
   @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
   .App{
-    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column
   }
 
   @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&family=Montserrat&display=swap');
@@ -42,6 +44,7 @@
 
   body{
     font-family: 'Roboto Slab', serif!important;
+    height: 100%;
   }
   #root{
     height: 100%;
@@ -55,7 +58,8 @@
     position: relative;
   }
 
-  .App{
+  .App-inner{
+    height: 100vh;
     display: flex;
     flex-direction: column;
   }
