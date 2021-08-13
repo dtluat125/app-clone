@@ -38,6 +38,10 @@ function SignIn(props){
                     <p><span onClick={props.onClick}>REGISTER</span> if you don't have any account</p>
 
                 </div>
+
+                <div className="notification" style={{color: "red"}}>
+                    <strong> Warning!</strong> {props.notification}
+                </div>
             </div>
             
         </div>

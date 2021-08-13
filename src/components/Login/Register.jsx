@@ -10,7 +10,7 @@ function Register(props){
             <div className="col-md-6 form-container">
             
                 <span className="form__title">
-                    Register
+                    Register 
                 </span>
                 <form method="post">
                     <div className="form__input">
@@ -36,11 +36,14 @@ function Register(props){
                       
                     </div>
 
-                    <button type="submit" onClick = {props.register}  className="form__button">Sign in</button>
+                    <button type="submit" onClick = {props.register}  className="form__button">Sign up</button>
                 </form>
 
                 <div className="change-form">
                     <p><span onClick={props.onClick}>Login</span> if you already have an account</p>
+                </div>
+                <div className="notification" style={{color: "red"}}>
+                    {props.notification!==""&&<strong> Warning!</strong>} {props.notification}
                 </div>
             </div>
             

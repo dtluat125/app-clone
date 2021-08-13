@@ -41,7 +41,7 @@
 }
 
 .c-modal__body{
-   
+   overflow-x: hidden;
 }
 
 .c-input-field{
@@ -99,4 +99,28 @@ span.upload-button{
 
 .c-modal__header .notification{
     margin-right: 50px;
+}
+
+@media (max-width: 706px){
+    .c-modal__body__columns{
+        flex-direction: column;
+    }
+
+    .c-modal__body__columns .col{
+        max-width: 80%;
+    }
+
+    .c-profile-photo-field {
+        padding: 0px;
+    }
+}
+
+/* Close button */
+.close-button{
+    color: rgba(29, 28, 29, 0.7);
+    padding: 6px;
+}
+
+.close-button:hover{
+    background: rgba(29, 28, 29, 0.034);
 }

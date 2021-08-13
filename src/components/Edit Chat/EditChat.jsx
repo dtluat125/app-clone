@@ -12,6 +12,7 @@ import InputField from "./InputField";
 import MembersTab from "./MembersTab";
 import RemoveAlertModal from "./RemoveAlertModal";
 import SettingTab from "./SettingTab";
+import CloseIcon from "@material-ui/icons/Close";
 function EditChat({ id, roomDetails, directUser, onClick }) {
   const userDirectId = useSelector(selectUserDirect);
   const roomId = useSelector(selectRoomId);
@@ -28,7 +29,12 @@ function EditChat({ id, roomDetails, directUser, onClick }) {
     ? directUser.photoURL
     : "default-avatar.jpg";
   return (
-    <div className="modal fade editChat" id={"a" + id} tabIndex="-1" aria-hidden="true">
+    <div
+      className="modal fade editChat"
+      id={"a" + id}
+      tabIndex="-1"
+      aria-hidden="true"
+    >
       <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div className="modal-content chat-details-modal">
           <div className="modal-header chat-details-modal__header c-modal__header">
@@ -40,6 +46,13 @@ function EditChat({ id, roomDetails, directUser, onClick }) {
                 ></div>
               )}
               <h1>{roomId ? roomName : userName}</h1>
+              <button 
+                className="c-button-unstyled close-button"
+                data-bs-dismiss = "modal"
+                data-bs-target = {id}
+              >
+                <CloseIcon />
+              </button>
             </div>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item" role="presentation">

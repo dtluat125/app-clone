@@ -7,11 +7,13 @@ import {
   selectDocId,
   selectLocalTime,
   selectSecondaryWorkspaceStatus,
+  selectUser,
   selectUserProfileUid,
   showSecondaryWorkspace,
 } from "../features/appSlice";
 import { db } from "../firebase";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
+import CloseIcon from "@material-ui/icons/Close";
 function SecondaryView({ width, resize }) {
   const selectedUser = useSelector(selectChosenUser);
   const photoURL = selectedUser?.photoURL;
@@ -19,7 +21,8 @@ function SecondaryView({ width, resize }) {
   const isOnline = selectedUser?.isOnline;
   const isOpen = useSelector(selectSecondaryWorkspaceStatus);
   const dispatch = useDispatch();
-
+  const userInf = useSelector(selectUser);
+  const job = userInf?.whatIDo;
   const localTime = useSelector(selectLocalTime);
   const closeWorkspace = () => {
     dispatch(
@@ -41,8 +44,11 @@ function SecondaryView({ width, resize }) {
           <span>Profile</span>
         </div>
         <div className="secondary-view__header__right">
-          <button className="c-button-unstyled" onClick={closeWorkspace}>
-            X
+          <button
+            className="c-button-unstyled close-button"
+            onClick={closeWorkspace}
+          >
+            <CloseIcon />
           </button>
         </div>
       </div>
@@ -59,6 +65,16 @@ function SecondaryView({ width, resize }) {
             />
           </div>
         </div>
+
+        <button
+          data-bs-toggle={"modal"}
+          data-bs-target="#editProfile"
+          className="c-button-unstyled link-button"
+          style = {{color: `rgba(18,100,163,1)`,
+            fontWeight: "700"}}
+        >
+          {job?job:"Add a job"}
+        </button>
 
         <div className="member-profile__fields">
           <div className="member-profile__field">

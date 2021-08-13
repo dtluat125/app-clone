@@ -1,89 +1,97 @@
 @font-face {
-    font-family: Poppins-Regular;
-    src: url('../fonts/poppins/Poppins-Regular.ttf'); 
-  }
-  
-  @font-face {
-    font-family: Poppins-Medium;
-    src: url('../fonts/poppins/Poppins-Medium.ttf'); 
-  }
-  
-  @font-face {
-    font-family: Poppins-Bold;
-    src: url('../fonts/poppins/Poppins-Bold.ttf'); 
-  }
-  
-  @font-face {
-    font-family: Poppins-SemiBold;
-    src: url('../fonts/poppins/Poppins-SemiBold.ttf'); 
-  }
-  
-  @font-face {
-    font-family: Montserrat-Bold;
-    src: url('../fonts/montserrat/Montserrat-Bold.ttf'); 
-  }
-  
-  @font-face {
-    font-family: Montserrat-SemiBold;
-    src: url('../fonts/montserrat/Montserrat-SemiBold.ttf'); 
-  }
-  
-  @font-face {
-    font-family: Montserrat-Regular;
-    src: url('../fonts/montserrat/Montserrat-Regular.ttf'); 
-  }
-  @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
-  .App{
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column
-  }
+  font-family: Poppins-Regular;
+  src: url("../fonts/poppins/Poppins-Regular.ttf");
+}
 
-  @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&family=Montserrat&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+@font-face {
+  font-family: Poppins-Medium;
+  src: url("../fonts/poppins/Poppins-Medium.ttf");
+}
 
-  body{
-    font-family: 'Roboto Slab', serif!important;
-    height: 100%;
-  }
-  #root{
-    height: 100%;
-  }
-  .work-space-body{
-    display: flex;
-    width: 100%;
-    align-items: stretch;
-    flex-grow: 1;
-    height: calc(100% - 38px);
-    position: relative;
-  }
+@font-face {
+  font-family: Poppins-Bold;
+  src: url("../fonts/poppins/Poppins-Bold.ttf");
+}
 
-  .App-inner{
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  /* Custom Scrollbar  */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
+@font-face {
+  font-family: Poppins-SemiBold;
+  src: url("../fonts/poppins/Poppins-SemiBold.ttf");
+}
 
-  ::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background: rgba(0,0,0,0.1);
-  }
+@font-face {
+  font-family: Montserrat-Bold;
+  src: url("../fonts/montserrat/Montserrat-Bold.ttf");
+}
 
-  ::-webkit-scrollbar-thumb{
-    border-radius: 10px;
-    background: rgba(0,0,0,0.2);
-  }
+@font-face {
+  font-family: Montserrat-SemiBold;
+  src: url("../fonts/montserrat/Montserrat-SemiBold.ttf");
+}
 
-  ::-webkit-scrollbar-thumb:hover{
-  	background: rgba(0,0,0,0.4);
-  }
+@font-face {
+  font-family: Montserrat-Regular;
+  src: url("../fonts/montserrat/Montserrat-Regular.ttf");
+}
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@font-face {
+  font-family: Slack-Lato;
+  font-style: normal;
+  font-weight: 300;
+  src: local("\263A"),
+    url(https://a.slack-edge.com/bv1-9/lato-light-0b50f74.woff2) format("woff2"),
+    url(https://a.slack-edge.com/bv1-9/lato-light-1475c14.woff) format("woff");
+  unicode-range: U+0000-f8fe, U+f900-ffff;
+}
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&family=Montserrat&display=swap");
 
-  ::-webkit-scrollbar-thumb:active{
-  	background: rgba(0,0,0,.9);
-  }
-  
+body {
+  font-family: 'Lato', sans-serif!important;
+  height: 100%;
+}
+#root {
+  height: 100%;
+}
+.work-space-body {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  flex-grow: 1;
+  height: calc(100% - 38px);
+  position: relative;
+}
+
+.App-inner {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+/* Custom Scrollbar  */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.9);
+}
+/* emoji handle */

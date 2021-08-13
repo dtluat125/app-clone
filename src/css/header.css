@@ -19,11 +19,26 @@
 .header__left .history-dropdown{
     margin-left: auto;
     margin-right: 30px;
+    
 }
+
 
 .header__avatar:hover{
     cursor: pointer;
 
+}
+
+.header__avatar .dropdown-menu{
+    transform: translate(-248px, 33px)!important;
+    padding: 12px 0px;
+}
+
+.header__avatar .dropdown-item{
+    padding-right: 12px;
+    padding-left: 24px;
+    line-height: 28px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .MuiSvgIcon-root{
@@ -113,6 +128,7 @@
     display: flex!important;
     pointer-events: none;
     cursor: unset;
+    padding: 8px 20px 12px 24px!important;
 }
 
 .main-menu__user__avatar{
@@ -226,4 +242,18 @@
     border-radius: 5px;
     margin-right: 5px;
     text-align: center;
+}
+/* Menu separator */
+.c-menu__separator{
+    line-height: 24px;
+    list-style-type: none;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.c-menu__separator__line{
+    margin: 0;
+    border-top: 1px solid rgba(29, 28, 29, 0.116);
+    border-bottom: 0;
+    color: rgba(29, 28, 29, 0.3);
 }

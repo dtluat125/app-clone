@@ -23,7 +23,7 @@ import SmallLoader from "../SmallLoader";
 import DayBlockMessages from "./DayBlockMessages";
 import firebase from "firebase";
 import DehazeIcon from "@material-ui/icons/Dehaze";
-
+import Emojify from "react-emojione";
 function Chat() {
   const dispatch = useDispatch();
   const chatRef = useRef(null);
@@ -250,9 +250,14 @@ function Chat() {
             </div>
             <div
               className="chat__header__right"
-              data-bs-toggle={(roomId||roomDirectId) ? "modal" : ""}
-              data-bs-target={(roomId||roomDirectId) ? "#" + "a" + (roomId?roomId:roomDirectId) : ""}
+              data-bs-toggle={roomId || roomDirectId ? "modal" : ""}
+              data-bs-target={
+                roomId || roomDirectId
+                  ? "#" + "a" + (roomId ? roomId : roomDirectId)
+                  : ""
+              }
             >
+              
               <span role="button">Details</span>
             </div>
           </div>

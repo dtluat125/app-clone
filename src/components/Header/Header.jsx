@@ -80,32 +80,27 @@ function Header() {
               Recent
             </div>
             {moves?.map((id) => {
-              return (
-                <DropdownMove id = {id}/>
-              )
+              return <DropdownMove id={id} />;
             })}
           </Dropdown.Menu>
         </Dropdown>
       </div>
       {/* Header Search */}
-     
-        <div className="dropdown header__search">
 
-          <div
-            className="header__search--inner"
-            id="dropdownMenuSearchHeader"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            data-bs-auto-close = "outside"
-          >
-            
-            <SearchIcon />
-          </div>
-
-          <DropdownSearchMenu />
+      <div className="dropdown header__search">
+        <div
+          className="header__search--inner"
+          id="dropdownMenuSearchHeader"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          data-bs-auto-close="outside"
+        >
+          <SearchIcon />
         </div>
-    
+
+        <DropdownSearchMenu />
+      </div>
 
       {/* Header Right */}
       <div className="header__right">
@@ -165,8 +160,8 @@ function Header() {
                   </span>
                 </div>
               </div>
-              <div className="dropdown-item" onClick={logOut}>
-                Sign Out
+              <div className="c-menu__separator">
+                <hr className="c-menu__separator__line" />
               </div>
               <div
                 className="dropdown-item"
@@ -177,6 +172,12 @@ function Header() {
               </div>
               <div className="dropdown-item" onClick={openProfile}>
                 View profile
+              </div>
+              <div className="c-menu__separator">
+                <hr className="c-menu__separator__line" />
+              </div>
+              <div className="dropdown-item" onClick={logOut}>
+                Sign out
               </div>
             </Dropdown.Menu>
           </Dropdown>

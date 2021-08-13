@@ -111,12 +111,14 @@
     border-radius: 3px;
     padding: 10px;
     outline: none;
+    padding-left: 40px;
     
 }
 
 .chat-input-container > form .send-button{
-    bottom: unset;
-    top: 24px;
+    left: initial;
+    top: initial;
+    bottom: initial;
 }
 .space{
     width: 10px;
@@ -302,7 +304,9 @@
 /* Day block message */
 
 .day-block-messages__container{
-    
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .day-block-messages__divider{
@@ -316,7 +320,8 @@
     position: relative;
     text-align: center;
     user-select: none;
-    margin-bottom: 10px;
+    padding: 15px 0px;
+    margin-bottom: 15px;
 }
 
 .day-block-messages__label{
@@ -342,6 +347,7 @@
     margin: 0 0 -1px 0;
     top: -1px;
     position: relative;
+    
 }
 /* Chat-input previewer */
 .chat__input-preview{
@@ -354,3 +360,28 @@
     ;
 }
 
+/* emoji handler */
+.emoji-trigger-button{
+    position: absolute;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    height: 34px;
+    width: 34px;
+    left: 16px;
+}
+
+.emojis-container{
+    outline: none;
+    position: absolute;
+    left: 0;
+    top: -400px;
+    z-index: 10;
+  }
+.emoji-mart{
+    box-shadow: rgba(29, 28, 29, 0.13) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 4px 12px 0px
+}
+
+.emoji-trigger-button:hover{
+    color: rgba(33, 37, 41, 0.548)    ;
+}

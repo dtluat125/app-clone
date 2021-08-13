@@ -10,7 +10,7 @@
 }
 .c-modal__header{
     background-color: inherit;
-    padding: 20px 28px;
+    padding: 20px ;
     width: 100%;
 }
 .chat-details-modal__header{
@@ -256,6 +256,7 @@
     display: flex;
     width: 100%;
     align-items: center;
+    justify-content: space-between;
 }
 /* About user tab */
 .c-tab-group__inner{

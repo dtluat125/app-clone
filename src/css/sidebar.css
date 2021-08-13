@@ -33,6 +33,7 @@
   user-select: none;
   position: relative;
   align-self: stretch;
+  overflow-y: scroll;
 }
 /* Sidebar-header */
 .side-bar__header {
