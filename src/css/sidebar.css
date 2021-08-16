@@ -17,9 +17,9 @@
   cursor: pointer;
 }
 
-.c-button-unstyled:focus {
+/* .c-button-unstyled:focus {
   box-shadow: none !important;
-}
+} */
 
 /* Sidebar */
 .nav.side-bar-container {
@@ -34,6 +34,8 @@
   position: relative;
   align-self: stretch;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
 }
 /* Sidebar-header */
 .side-bar__header {

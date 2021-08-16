@@ -9,6 +9,7 @@ import {
   selectSecondaryWorkspaceStatus,
   selectUser,
   selectUserProfileUid,
+  setSelectedUser,
   showSecondaryWorkspace,
 } from "../features/appSlice";
 import { db } from "../firebase";
@@ -22,8 +23,10 @@ function SecondaryView({ width, resize }) {
   const isOpen = useSelector(selectSecondaryWorkspaceStatus);
   const dispatch = useDispatch();
   const userInf = useSelector(selectUser);
-  const job = userInf?.whatIDo;
+  const job = selectedUser?.whatIDo;
   const localTime = useSelector(selectLocalTime);
+
+
   const closeWorkspace = () => {
     dispatch(
       showSecondaryWorkspace({
@@ -67,7 +70,7 @@ function SecondaryView({ width, resize }) {
         </div>
 
         <button
-          data-bs-toggle={"modal"}
+          data-bs-toggle={userInf?.uid===selectedUser?.uid?"modal":"false"}
           data-bs-target="#editProfile"
           className="c-button-unstyled link-button"
           style = {{color: `rgba(18,100,163,1)`,

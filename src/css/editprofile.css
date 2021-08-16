@@ -33,6 +33,7 @@
 
 .c-modal__body__section{
     padding: 0 28px;
+    width: 100%;
 }
 
 .c-modal__body__columns{
@@ -107,7 +108,7 @@ span.upload-button{
     }
 
     .c-modal__body__columns .col{
-        max-width: 80%;
+        width: 100%;
     }
 
     .c-profile-photo-field {

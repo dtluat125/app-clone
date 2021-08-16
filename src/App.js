@@ -5,7 +5,7 @@ import "./css/login.css";
 import Header from "./components/Header/Header";
 import SideBar from "./components/SideBar/SideBar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.js";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Chat from "./components/Chat/Chat";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "./firebase";
@@ -98,24 +98,24 @@ function App() {
     console.log("Clicked");
   };
 
-  useEffect(() => {
-    console.log(toggle);
-    console.log($(".modal:visible"));
-    $(document).on("shown.bs.modal", ".modal", function () {
-      console.log("Added!!!1");
-      var zIndex = 1040 + 20 * $(".modal:visible").length;
-      $(this).css("z-index", zIndex);
-      setTimeout(function () {
-        $(".modal-backdrop")
-          .not(".modal-stack")
-          .css("z-index", zIndex - 1 + `!important`)
-          .addClass("modal-stack");
-      }, 0);
-    });
-  }, [toggle]);
+  // useEffect(() => {
+  //   console.log(toggle);
+  //   console.log($(".modal:visible"));
+  //   $(document).on("shown.bs.modal", ".modal", function () {
+  //     console.log("Added!!!1");
+  //     var zIndex = 1040 + 20 * $(".modal:visible").length;
+  //     $(this).css("z-index", zIndex);
+  //     setTimeout(function () {
+  //       $(".modal-backdrop")
+  //         .not(".modal-stack")
+  //         .css("z-index", zIndex - 1 + `!important`)
+  //         .addClass("modal-stack");
+  //     }, 0);
+  //   });
+  // }, [toggle]);
   // Get user info
   const userInf = useSelector(selectUser);
-
+  
   return (
     <div className="App" onresize>
       {/* <LogIn/> */}

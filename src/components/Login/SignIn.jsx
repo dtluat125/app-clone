@@ -40,7 +40,7 @@ function SignIn(props){
                 </div>
 
                 <div className="notification" style={{color: "red"}}>
-                    <strong> Warning!</strong> {props.notification}
+                {props.notification!==""&&<strong> Warning!</strong>} {props.notification}
                 </div>
             </div>
             

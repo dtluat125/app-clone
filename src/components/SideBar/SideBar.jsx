@@ -53,57 +53,8 @@ function SideBar({ width }) {
     )
   );
   // Collapse sidebar handle
-  let windowWidth;
-  let chatWidth;
-  const isSecondaryWorkspaceOpen = useSelector(selectSecondaryWorkspaceStatus);
-  useEffect(() => {
-    const chatContainer = document.querySelector(".chat-container");
-    const sidebarContainer = document.querySelector(".side-bar-container");
-    const sidebarToggler = document.querySelector(
-      ".sidebar-toggle-button.c-button-unstyled"
-    );
 
-    const reportWindowSize = () => {
-      windowWidth = window.innerWidth;
-      chatWidth = chatContainer.offsetWidth;
-      if ((windowWidth < 706&&windowWidth>=576)) {
-        sidebarContainer?.classList.add("sidebar-collapse");
-        sidebarToggler?.classList.remove("collapse");
-        console.log("first condition");
-        chatContainer?.classList.remove("collapse");
-      } 
-      else if(windowWidth < 576&&isSecondaryWorkspaceOpen){
-        chatContainer?.classList.add("collapse")
-      }
-      else if(windowWidth < 576|| chatWidth < 400){
-        sidebarContainer?.classList.add("sidebar-collapse");
-        sidebarToggler?.classList.remove("collapse");
-        chatContainer?.classList.remove("collapse")
-      }
-      else {
-        chatContainer?.classList.remove("collapse")
-        sidebarToggler?.classList.add("collapse");
-        sidebarContainer?.classList.remove("sidebar-collapse");
-        sidebarContainer?.classList.remove("sidebar-float");
-      }
-    };
-    reportWindowSize();
-    window.addEventListener("resize", reportWindowSize);
-  },);
-
-  useEffect(() => {
-    const sidebarCollapse = document.querySelector(".sidebar-collapse");
-    const chatContainer = document.querySelector(".chat-container");
-    const secondaryWorkspace = document.querySelector(
-      ".secondary-view-container"
-    );
-    const closeSidebar = () => {
-      sidebarCollapse?.classList.remove("sidebar-float");
-    };
-
-    chatContainer?.addEventListener("click", closeSidebar);
-    secondaryWorkspace?.addEventListener("click", closeSidebar);
-  });
+  
 
   return (
     <div className="side-bar-container" style={{ width: width }}>

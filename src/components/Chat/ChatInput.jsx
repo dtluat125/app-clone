@@ -46,9 +46,9 @@ function ChatInput({ channelName, channelId, chatRef, isDirect }) {
       setInput("");
     }
   };
-  chatRef?.current?.scrollIntoView({
-    behavior: "smooth",
-  });
+  
+
+
   // Emoji handler
   const inputChangeHandler = (e) => {
     const newInput = emojify(e.target.value, { output: "unicode" });
@@ -69,9 +69,12 @@ function ChatInput({ channelName, channelId, chatRef, isDirect }) {
   useEffect(() => {
     const emojisContainer = document.querySelector(".emojis-container");
     const divs = document.querySelectorAll("div:not(.emoji-trigger-button)");
-    const chatContainer = document.querySelector(".chat-container");
+    const chatMessages = document.querySelector(".chat-messages");
+    const chatHeader = document.querySelector(".chat__header");
+    const header = document.querySelector(".header-container");
     const sidebarContainer = document.querySelector(".side-bar-container");
-    const inputContainer = document.querySelector("form");
+    const inputContainer = document.querySelector("form>input");
+    const button = document.querySelector("form>button");
     const emojiTriggerButton = document.querySelector(".emoji-trigger-button");
     const openList = () => {
       emojisContainer.classList.remove("collapse");
@@ -80,24 +83,26 @@ function ChatInput({ channelName, channelId, chatRef, isDirect }) {
       emojisContainer.classList.add("collapse");
     };
 
-    
     emojiTriggerButton.addEventListener("click", openList);
-    // chatContainer.addEventListener("click", closeList);
-    // sidebarContainer.addEventListener("click", closeList);
-    // inputContainer.addEventListener("click", closeList);
+    sidebarContainer.addEventListener("click", closeList);
+    inputContainer.addEventListener("click", closeList);
+    button.addEventListener("click", closeList);
+    chatMessages.addEventListener("click", closeList);
+    chatHeader.addEventListener("click", closeList);
+    header.addEventListener("click", closeList);
     return () => {
-        const removeEventListener = () => {
-            emojiTriggerButton.removeEventListener("click", openList)
-        }
-        removeEventListener();
-    }
-  });
-  console.log(emojisOpen);
+      const removeEventListener = () => {
+        emojiTriggerButton.removeEventListener("click", openList);
+      };
+      removeEventListener();
+    };
+  }, [emojisOpen]);
   return (
     <div className="chat-input-container">
       <span className="emojis-container collapse">
         <Picker onSelect={addEmoji} />
       </span>
+
       <form>
         <div
           className="emoji-trigger-button"

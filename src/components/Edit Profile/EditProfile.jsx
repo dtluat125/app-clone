@@ -70,7 +70,7 @@ function EditProfile() {
           </div>
 
           <div className="modal-body c-modal__body">
-            <div className="c-modal__body__section" style={{ width: 700 }}>
+            <div className="c-modal__body__section" >
               <div className="c-modal__body__columns">
                 <div className="col c-input-field">
                   <InputSection

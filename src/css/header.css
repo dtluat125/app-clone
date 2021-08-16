@@ -86,6 +86,7 @@
     position: relative;
     overflow: hidden;
     display: inline;
+    border-radius: 4px;
 }
 
 .header__avatar button{

@@ -20,7 +20,7 @@ function LogIn(props) {
   const [users, usersLoading] = useCollection(db.collection("users"));
   const user = useAuthState(auth);
   const [notification, setNotification] = useState("");
-
+  const userss = db.collection('users')
   function onSignIn() {
     setIsSignIn(false);
     setNotification("");
@@ -93,9 +93,10 @@ function LogIn(props) {
           isOnline: true,
         };
 
-        let userDb;
+        let userDb
         if (!usersLoading && users) {
           userDb = users?.docs.find((elem) => elem.data().uid === userInf.uid);
+          console.log(userDb.data())
           dispatch(saveUserInfo({ user: userDb?.data() }));
           dispatch(
             docUserId({

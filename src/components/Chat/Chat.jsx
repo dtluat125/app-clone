@@ -8,6 +8,7 @@ import {
   selectChosenUser,
   selectDirectMessageRoom,
   selectRoomId,
+  selectSecondaryWorkspaceStatus,
   selectUser,
   selectUserDirect,
   setDirectUser,
@@ -24,6 +25,7 @@ import DayBlockMessages from "./DayBlockMessages";
 import firebase from "firebase";
 import DehazeIcon from "@material-ui/icons/Dehaze";
 import Emojify from "react-emojione";
+import { Picker } from "emoji-mart";
 function Chat() {
   const dispatch = useDispatch();
   const chatRef = useRef(null);
@@ -74,12 +76,13 @@ function Chat() {
   const directStatus = directUser?.data()?.isOnline;
   //
   // Open profile
-  //
+  // Scroll
   useEffect(() => {
-    chatRef?.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [roomId, loading, directLoading]);
+    if (roomMessages || roomDirectMessages)
+      chatRef?.current?.scrollIntoView({
+        behavior: "smooth",
+      });
+  }, [roomMessages, roomDirectMessages, roomLoading, directLoading]);
   //   Create block message
   const blocksMessage = {};
   roomId
@@ -106,11 +109,13 @@ function Chat() {
         blocksMessage[config].push(
           <Message
             key={doc.id}
+            id = {doc.id}
             message={message}
             timestamp={timestamp}
             userName={user}
             userImage={userImage}
             uid={uid}
+            reactions = {doc.data().reactions}
             isDirect={false}
           />
         );
@@ -204,12 +209,68 @@ function Chat() {
     let sidebarContainer = document.querySelector(".side-bar-container");
     sidebarContainer?.classList.add("sidebar-float");
   };
+
+  // Handle mobile view
+  let windowWidth;
+  let chatWidth;
+  const isSecondaryWorkspaceOpen = useSelector(selectSecondaryWorkspaceStatus);
+  useEffect(() => {
+    console.log("On load");
+    const chatContainer = document.querySelector(".chat-container");
+    const sidebarContainer = document.querySelector(".side-bar-container");
+    const sidebarToggler = document.querySelector(
+      ".sidebar-toggle-button.c-button-unstyled"
+    );
+
+    const secondaryWorkspace = document.querySelector(
+      ".secondary-view-container"
+    );
+    const reportWindowSize = () => {
+      windowWidth = window.innerWidth;
+      chatWidth = chatContainer.offsetWidth;
+      console.log(sidebarToggler);
+      if (windowWidth < 706 && windowWidth >= 576) {
+        sidebarContainer?.classList.add("sidebar-collapse");
+        sidebarToggler?.classList.remove("collapse");
+        chatContainer?.classList.remove("collapse");
+      } else if (windowWidth < 576 && isSecondaryWorkspaceOpen) {
+        chatContainer?.classList.add("collapse");
+      } else if (windowWidth < 576 || chatWidth < 400) {
+        sidebarContainer?.classList.add("sidebar-collapse");
+        sidebarToggler?.classList.remove("collapse");
+        chatContainer?.classList.remove("collapse");
+      } else {
+        chatContainer?.classList.remove("collapse");
+        sidebarToggler?.classList.add("collapse");
+        sidebarContainer?.classList.remove("sidebar-collapse");
+        sidebarContainer?.classList.remove("sidebar-float");
+      }
+      // Collapse handler
+      const sidebarCollapse = document.querySelector(".sidebar-collapse");
+      const closeSidebar = () => {
+        sidebarCollapse?.classList.remove("sidebar-float");
+      };
+      chatContainer.addEventListener("click", closeSidebar);
+      secondaryWorkspace.addEventListener("click", closeSidebar);
+    };
+    reportWindowSize();
+    window.addEventListener("resize", reportWindowSize);
+  });
+  const addEmoji = () => {
+
+  }
+
+  //
+
   return (
     <div className="chat-container">
       {loading || directLoading || usersLoading ? (
         <SmallLoader />
       ) : (
         <>
+          <span className="emojis-container-moving collapse">
+            <Picker onSelect={addEmoji} />
+          </span>
           <div className="chat__header">
             <div className="chat__header__left">
               <div
@@ -257,7 +318,6 @@ function Chat() {
                   : ""
               }
             >
-              
               <span role="button">Details</span>
             </div>
           </div>

@@ -41,7 +41,6 @@ function SettingTab() {
       }
   }, [isChange]);
 
-  console.log("Delete channel: "+ isDelete);
 
   useEffect(() => {
     if(isDelete)

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/header.css";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import SearchIcon from "@material-ui/icons/Search";
@@ -14,6 +14,7 @@ import {
   selectDocId,
   selectMoves,
   selectUser,
+  setSelectedUser,
   setUserProfileUid,
   showSecondaryWorkspace,
 } from "../../features/appSlice";
@@ -24,7 +25,7 @@ function Header() {
   const userInf = useSelector(selectUser);
   const [users, loading] = useCollection(db.collection("users"));
   const user = users?.docs.find((elem) => elem.data().uid === userInf?.uid);
-
+  const [onViewing, setOnViewing] = useState(false)
   const dispatch = useDispatch();
   const logOut = async () => {
     await auth
@@ -47,6 +48,7 @@ function Header() {
   const photoURL = user?.data().photoURL;
   // Open profile
   const openProfile = () => {
+    setOnViewing(true)
     dispatch(
       setUserProfileUid({
         userUid: userInf?.uid,
@@ -58,6 +60,29 @@ function Header() {
       })
     );
   };
+
+  
+  useEffect(() => {
+    if(onViewing){
+      dispatch(
+        setSelectedUser({
+          selectedUser: {
+            displayName: user?.data().displayName,
+            email: user?.data().email,
+            uid: userInf?.uid,
+            photoURL: photoURL,
+            isOnline: userInf?.isOnline,
+            whatIDo: user?.data().whatIDo,
+          },
+        })
+      )
+    };
+    return () => {
+      setOnViewing(false)
+    }
+  }, [onViewing])
+
+
   // Get Moves
   const moves = useSelector(selectMoves);
   return (

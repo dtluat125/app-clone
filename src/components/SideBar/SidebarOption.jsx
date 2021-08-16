@@ -50,7 +50,7 @@ function SidebarOption({
 
   const usersHaveRead = directRoom?.data().usersHaveRead;
   const addNewDirect = async () => {
-    if (!directRoom && uid && !loading) {
+    if (!directRoom && uid&&userUid && !loading&&users) {
       await db
         .collection("directRooms")
         .add({
