@@ -56,7 +56,7 @@ function Message({
   //
 
   const hoverHandler = () => {
-    if(description)
+    if(!description)
     setOnHover(true);
   };
   const notHoverHandler = () => {
