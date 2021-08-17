@@ -26,6 +26,7 @@ import firebase from "firebase";
 import DehazeIcon from "@material-ui/icons/Dehaze";
 import Emojify from "react-emojione";
 import { Picker } from "emoji-mart";
+
 function Chat() {
   const dispatch = useDispatch();
   const chatRef = useRef(null);
@@ -34,7 +35,8 @@ function Chat() {
   // Room message
   const roomId = useSelector(selectRoomId);
   const directMessageUid = useSelector(selectUserDirect);
-
+  const [emojiReact, setEmojiReact] = useState("");
+  const [reactToggle, setReactToggle] = useState(false)
   if (!roomId && !directMessageUid) {
     dispatch(
       enterRoom({
@@ -55,6 +57,34 @@ function Chat() {
         .orderBy("timestamp", "asc")
   );
 
+  // Open emoji mart
+  const [position, setPosition] = useState(null);
+  const openEmojiMart = (position) => {
+    setPosition(position);
+    console.log(position);
+  };
+  //Close emoji mart
+  const ref = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setPosition(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+  // Add react
+
+  const addEmoji = (e) => {
+    let emoji = e.native;
+    setEmojiReact(emoji);
+    setReactToggle(!reactToggle)
+  };
   // Direct message
   const roomDirectId = useSelector(selectDirectMessageRoom);
   const [users, usersLoading] = useCollection(db.collection("users"));
@@ -87,7 +117,7 @@ function Chat() {
   const blocksMessage = {};
   roomId
     ? roomMessages?.docs.map((doc) => {
-        const { message, timestamp, user, userImage, uid } = doc.data();
+        const { message, timestamp, user, userImage, uid, isSaved } = doc.data();
         const time = new Date(timestamp?.toDate());
         var date = time.getDate();
         var year = time.getFullYear();
@@ -108,20 +138,25 @@ function Chat() {
         blocksMessage[config]["timestamp"] = timestamp;
         blocksMessage[config].push(
           <Message
+            emojiMartPosition={position}
+            onClick={openEmojiMart}
             key={doc.id}
-            id = {doc.id}
+            id={doc.id}
             message={message}
             timestamp={timestamp}
             userName={user}
             userImage={userImage}
             uid={uid}
-            reactions = {doc.data().reactions}
+            reactions={doc.data().reactions}
             isDirect={false}
+            emojiReact = {emojiReact}
+            reactToggle = {reactToggle}
+            isSaved = {isSaved}
           />
         );
       })
     : roomDirectMessages?.docs.map((doc) => {
-        const { message, timestamp, user, userImage, uid } = doc.data();
+        const { message, timestamp, user, userImage, uid, isSaved } = doc.data();
         const time = new Date(timestamp?.toDate());
         var date = time.getDate();
         var year = time.getFullYear();
@@ -143,6 +178,8 @@ function Chat() {
         blocksMessage[config]["timestamp"] = timestamp;
         blocksMessage[config].push(
           <Message
+            emojiMartPosition={position}
+            onClick={openEmojiMart}
             key={doc.id}
             message={message}
             timestamp={timestamp}
@@ -150,6 +187,9 @@ function Chat() {
             userImage={userImage}
             uid={uid}
             isDirect={true}
+            emojiReact={emojiReact}
+            reactToggle = {reactToggle}
+            isSaved = {isSaved}
           />
         );
       });
@@ -256,9 +296,6 @@ function Chat() {
     reportWindowSize();
     window.addEventListener("resize", reportWindowSize);
   });
-  const addEmoji = () => {
-
-  }
 
   //
 
@@ -268,9 +305,20 @@ function Chat() {
         <SmallLoader />
       ) : (
         <>
-          <span className="emojis-container-moving collapse">
-            <Picker onSelect={addEmoji} />
-          </span>
+          {position && (
+            <span
+              ref={ref}
+              className="emojis-container-moving"
+              style={{
+                position: "fixed",
+                right: position.positionInfo.x-174,
+                top: (position.positionInfo.y-442)>33?(position.positionInfo.y-442):33,
+                zIndex: 99,
+              }}
+            >
+              <Picker onSelect={addEmoji} />
+            </span>
+          )}
           <div className="chat__header">
             <div className="chat__header__left">
               <div

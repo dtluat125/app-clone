@@ -179,9 +179,11 @@
   max-width: 100%;
 }
 
-.side-bar-container .MuiSvgIcon-root {
-  font-size: small;
+.sidebar__icon .MuiSvgIcon-root {
+  font-size: 1.3rem;
 }
+
+
 
 .side-bar-container .dropdown > button {
   padding: 0;
@@ -223,6 +225,7 @@
 
 .sidebar__option-container .sidebar__icon {
   padding: 0 5px 0 5px;
+  font-size: 1rem;
 }
 
 button.send-button:active {
@@ -234,9 +237,7 @@ button.send-button:active {
   font-size: 1.3rem;
 }
 
-.item-icon .MuiSvgIcon-root {
-  font-size: 1.3rem;
-}
+
 
 .item-icon {
   transition: all 0.3s ease;
@@ -245,7 +246,7 @@ button.send-button:active {
 .sidebar__option__channel {
   padding-left: 20px;
   position: relative;
-  display: inline-block;
+  display: flex;
 }
 
 .sidebar__option__channel span {
@@ -256,11 +257,13 @@ button.send-button:active {
   border-bottom: 1px solid rgb(82, 38, 83);
 }
 
-.sidebar__option__channel img {
-  max-height: 24px;
-  max-width: 24px;
+.sidebar__option__channel .img {
+  height: 24px;
+  width: 24px;
   border-radius: 5px;
   margin-right: 10px;
+  background-position: center;
+  background-size: cover;
 }
 
 .sidebar__option__channel .no-status {
@@ -275,6 +278,9 @@ button.send-button:active {
 
 .sidebar__option__channel .online {
   color: green;
+}
+.sidebar__option__channel .MuiSvgIcon-root{
+  font-size: small;
 }
 /* Unread notifications */
 .unread-notification {

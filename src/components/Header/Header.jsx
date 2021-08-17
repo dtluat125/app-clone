@@ -105,7 +105,7 @@ function Header() {
               Recent
             </div>
             {moves?.map((id) => {
-              return <DropdownMove id={id} />;
+              return <DropdownMove key = {id} id={id} />;
             })}
           </Dropdown.Menu>
         </Dropdown>

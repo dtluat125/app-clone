@@ -10,6 +10,8 @@ import {
   selectUserDirect,
   setMoves,
   setSelectedUser,
+  setUserProfileUid,
+  showSecondaryWorkspace,
 } from "../../features/appSlice";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import LockIcon from "@material-ui/icons/Lock";
@@ -29,6 +31,7 @@ function SidebarOption({
   usersHaveReadRoom,
   isPrivate,
   members,
+  savedItems,
 }) {
   const dispatch = useDispatch();
   const seeAllDm = () => {};
@@ -50,7 +53,7 @@ function SidebarOption({
 
   const usersHaveRead = directRoom?.data().usersHaveRead;
   const addNewDirect = async () => {
-    if (!directRoom && uid&&userUid && !loading&&users) {
+    if (!directRoom && uid && userUid && !loading && users) {
       await db
         .collection("directRooms")
         .add({
@@ -105,7 +108,7 @@ function SidebarOption({
           directMessageRoomId: directRoom?.id,
         })
       );
-  
+
       db.collection("directRooms")
         .doc(directRoom.id)
         .update({
@@ -141,11 +144,30 @@ function SidebarOption({
     );
   };
   useEffect(() => {
-    addMoves(roomId ? roomId : directMessageRoomId);
+    if (!savedItems) addMoves(roomId ? roomId : directMessageRoomId);
   }, [roomId, directMessageUid]);
 
+  // Go to saved Items
+  
+  const gotoSavedItems = () => {
+    dispatch(showSecondaryWorkspace({
+      isShowingSecondaryWorkspace: true
+    }))
+    dispatch(setUserProfileUid({
+      userUid: null
+    }))
+    dispatch(setSelectedUser({
+      selectedUser: null
+    }))
+  }
+
   //
-  if (members?.includes(user.uid) || isUser || id === defaultRoomId)
+  if (
+    members?.includes(user.uid) ||
+    isUser ||
+    id === defaultRoomId ||
+    savedItems
+  )
     return (
       <div
         className={
@@ -156,6 +178,7 @@ function SidebarOption({
         tabIndex="1"
         role="button"
         onClick={
+          savedItems?gotoSavedItems:
           id && !isUser ? selectChannel : isUser ? selectPerson : seeAllDm
         }
       >
@@ -171,7 +194,10 @@ function SidebarOption({
                 <LockIcon />
               )
             ) : photoURL ? (
-              <img src={photoURL} alt="avatar" />
+              <div
+                className="img"
+                style={{ backgroundImage: `url(${photoURL})` }}
+              ></div>
             ) : (
               <img src="default-avatar.jpg" alt="avatar" />
             )}

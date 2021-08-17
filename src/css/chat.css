@@ -125,7 +125,7 @@
 .message-container {
   display: flex;
   position: relative;
-  align-items: center;
+  flex-direction: column;
 }
 
 .message__avatar {
@@ -177,12 +177,17 @@
   display: flex;
   align-items: flex-start;
   flex: 1 1;
-  padding: 10px 20px;
+  padding: 0px 20px 10px 20px;
   max-width: 100%;
+  position: relative;
 }
 
-.message-container__inner.active {
+.message-container.active {
   background-color: rgba(248, 248, 248, 0.699);
+}
+
+.message-container.saved {
+  background-color: rgba(242, 199, 68, 0.1);
 }
 
 /* RESIZER */
@@ -431,7 +436,7 @@
   vertical-align: top;
   border: none;
   border-radius: 12px;
-  background-color: rgba(29, 28, 29, 0.04)!important;
+  background-color: rgba(29, 28, 29, 0.04) !important;
   user-select: none;
 }
 
@@ -441,7 +446,7 @@
 
 .c-reaction.active {
   box-shadow: rgb(29, 155, 209) 0px 0px 0px 1px inset;
-  background-color: rgba(29, 155, 209, 0.1)!important;
+  background-color: rgba(29, 155, 209, 0.1) !important;
 }
 
 .c-reaction:active {
@@ -453,13 +458,39 @@
   width: 16px;
   height: 16px;
 }
-.c-reaction__count{
+.c-reaction__count {
   font-weight: 700;
 }
 .c-reaction.active .c-reaction__count {
   color: rgba(var(--sk_highlight, 18, 100, 163), 1);
-
 }
 .c-reaction__count {
   color: rgb(29, 30, 29);
+}
+/* Message label */
+
+.message__label {
+  display: flex;
+  padding: 4px 20px;
+}
+
+.message__label__icon {
+  color: red;
+  width: 36px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.message__label__icon .MuiSvgIcon-root {
+  font-size: 13px;
+}
+
+.message__label__content {
+  padding-left: 10px;
+  color: rgba(29, 28, 29, 0.7);
+  font-size: 13px;
+}
+.message__label__content:hover{
+  text-decoration: underline;
 }

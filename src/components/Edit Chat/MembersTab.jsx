@@ -128,6 +128,7 @@ function MembersTab({ roomMembers, roomOwner, id }) {
               if (!checked)
                 return (
                   <Member
+                    key = {user.uid}
                     filterText={searchAddInput.toLowerCase()}
                     user={user}
                     className="dropdown-item"

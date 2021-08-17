@@ -17,6 +17,7 @@ import {
   selectUser,
 } from "../../features/appSlice";
 import SmallLoader from "../SmallLoader";
+import TurnedInNotOutlinedIcon from "@material-ui/icons/TurnedInNotOutlined";
 function SideBar({ width }) {
   const [channels, loading, error] = useCollection(db.collection("room"));
   const user = useSelector(selectUser);
@@ -54,8 +55,6 @@ function SideBar({ width }) {
   );
   // Collapse sidebar handle
 
-  
-
   return (
     <div className="side-bar-container" style={{ width: width }}>
       {loading && usersLoading ? (
@@ -63,6 +62,11 @@ function SideBar({ width }) {
       ) : (
         <>
           <SidebarHeader />
+          <SidebarOption
+            title="Saved items"
+            icon={<TurnedInNotOutlinedIcon />}
+            savedItems = {true}
+          />
           <SidebarCollapse
             options={[
               <SidebarOption
