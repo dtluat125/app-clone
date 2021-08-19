@@ -115,7 +115,7 @@ function App() {
   // }, [toggle]);
   // Get user info
   const userInf = useSelector(selectUser);
-  
+
   return (
     <div className="App" onresize>
       {/* <LogIn/> */}
@@ -144,7 +144,7 @@ function App() {
             <div className="work-space-body">
               <SideBar width={sideBarWidth} />
               <Reiszer onMouseDown={handleResizeSideBar} />
-              <Chat onClick={handleToggle} />
+              <Chat width={profileWidth} onClick={handleToggle} />
               <Reiszer onMouseDown={handleResizeChat} />
               <SecondaryView width={profileWidth} resize={resize} />
             </div>

@@ -45,7 +45,7 @@ function DropdownItem({ icon, name, photoURL, id, uid, filterText }) {
       })
     );
 
-    if (!directRoom && loading==false) {
+    if (!directRoom && loading == false) {
       db.collection("directRooms").add({
         uids: [userUid, uid],
       });
@@ -62,24 +62,28 @@ function DropdownItem({ icon, name, photoURL, id, uid, filterText }) {
       dispatch(setSelectedUser({ selectedUser: null }));
     }
   };
-//   filter handle
-  const filterName = !photoURL?filterText.slice(9):filterText.slice(6);
-  if(name?.indexOf(filterName)!=-1)
-  return (
-    <div
-      className="dropdown-item list-item"
-      onClick={!photoURL ? selectChannel : enterDirect}
-    >
-      <div
-        style={photoURL ? { backgroundImage: `url(${photoURL})` } : {}}
-        className="list-item__icon"
-      >
-        {icon ? icon : ""}
+  //   filter handle
+  const filterName = !photoURL ? filterText.slice(9) : filterText.slice(6);
+  if (name?.indexOf(filterName) != -1)
+    return (
+      <div className="c-search__suggesstion-item">
+        <div
+          className="c-search__suggesstion-item--inner"
+          onClick={!photoURL ? selectChannel : enterDirect}
+        >
+          <div className="c-search__suggestion-item__content">
+            <div
+              style={photoURL ? { backgroundImage: `url(${photoURL})` } : {}}
+              className="list-item__icon"
+            >
+              {icon ? icon : ""}
+            </div>
+            <div className="list-item__name">{name}</div>
+          </div>
+        </div>
       </div>
-      <div className="list-item__name">{name}</div>
-    </div>
-  );
-  else return("");
+    );
+  else return "";
 }
 
 export default DropdownItem;

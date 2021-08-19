@@ -122,6 +122,8 @@ function Header() {
           data-bs-auto-close="outside"
         >
           <SearchIcon />
+
+          <span>Search fetch</span>
         </div>
 
         <DropdownSearchMenu />

@@ -29,7 +29,7 @@ function InitAccount() {
     await fileRef.put(file);
     setImgURL(await fileRef.getDownloadURL());
     setLoading(false);
-    console.log(imgURL)
+    console.log(imgURL);
   };
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -63,7 +63,7 @@ function InitAccount() {
             saveUserInfo({
               user: {
                 displayName: name,
-                WhatIDo: job,
+                whatIDo: job,
                 photoURL: imgURL,
                 uid: userInf.uid,
                 email: userInf.email,
@@ -79,6 +79,21 @@ function InitAccount() {
         .doc(id)
         .update({
           whatIDo: job,
+        })
+        .then(() => {
+          dispatch(
+            saveUserInfo({
+              user: {
+                displayName: name,
+                whatIDo: job,
+                photoURL: imgURL,
+                uid: userInf.uid,
+                email: userInf.email,
+                emailVerified: userInf.emailVerified,
+                isOnline: true,
+              },
+            })
+          );
         })
         .catch((err) => alert(err.message));
     }

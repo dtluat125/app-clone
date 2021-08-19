@@ -2,15 +2,14 @@
 import firebase from "firebase";
 import 'firebase/storage'
 const firebaseConfig = {
-    apiKey: "AIzaSyCmzK2LdP7LkJNXNnQBJxSTX9EOvnIsV-k",
-    authDomain: "chat-app-ba041.firebaseapp.com",
-    projectId: "chat-app-ba041",
-    storageBucket: "chat-app-ba041.appspot.com",
-    messagingSenderId: "410871016552",
-    appId: "1:410871016552:web:1ef1149c5824861da5dfdd",
-    measurementId: "G-BCB1RKDQ3Q"
-  };
-
+  apiKey: "AIzaSyDafBxtwZKWr8jQ4mp7tFzbNsndSGWz-FA",
+  authDomain: "social-page-65f4f.firebaseapp.com",
+  projectId: "social-page-65f4f",
+  storageBucket: "social-page-65f4f.appspot.com",
+  messagingSenderId: "227253633418",
+  appId: "1:227253633418:web:1d46615fb865426d084873",
+  measurementId: "G-FMQYMFV2HV"
+};
   const firebaseApp = firebase.initializeApp(firebaseConfig);
   const storage = firebaseApp.storage();
   const db = firebaseApp.firestore();

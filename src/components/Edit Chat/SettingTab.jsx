@@ -13,7 +13,7 @@ function SettingTab() {
   const [isDelete, setIsDelete] = useState(false);
   const isPrivate = roomDetails?.data()?.isPrivate;
   const [noti, setNoti] = useState("");
-  const defaultRoomId = "CcfrQCURBPLWpn6lj0k8";
+  const defaultRoomId = "A86N0fmTCy8fTd4NS0Ne";
   const changeType = () => {
     setIsChange(true);
   };

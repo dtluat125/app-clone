@@ -10,6 +10,8 @@
     display: flex;
     flex-direction: column;
     border-left: 1px solid var(--saf-0);
+    align-items: stretch;
+    position: relative;
 }
 
 
@@ -50,9 +52,15 @@ button.close-button:hover{
 .secondary-view__body{
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     overflow-y: scroll;
     flex-grow: 10;
+}
+
+.secondary-view__body__inner{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .member-profile__avatar-container{

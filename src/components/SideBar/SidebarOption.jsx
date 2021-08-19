@@ -73,7 +73,11 @@ function SidebarOption({
     }
   };
   const selectChannel = () => {
+    let usersHaveReadArr = usersHaveReadRoom?usersHaveReadRoom.slice():[];
     if (id) {
+      if(!usersHaveReadArr.includes(user.uid)){
+        usersHaveReadArr.push(user.uid)
+      }
       dispatch(
         enterDirectMessage({
           directMessageUid: null,
@@ -87,9 +91,7 @@ function SidebarOption({
       db.collection("room")
         .doc(id)
         .update({
-          usersHaveRead: usersHaveReadRoom
-            ? usersHaveReadRoom.concat(user.uid)
-            : [userUid],
+          usersHaveRead: usersHaveReadArr
         });
     }
   };
@@ -102,6 +104,9 @@ function SidebarOption({
     );
 
     if (directRoom?.id) {
+      let usersHaveReadArr = usersHaveRead;
+      if(!usersHaveReadArr) usersHaveReadArr = [];
+      if(!usersHaveReadArr.includes(user.uid)) usersHaveReadArr.push(user.uid)
       dispatch(
         enterDirectMessage({
           directMessageUid: uid,
@@ -112,9 +117,7 @@ function SidebarOption({
       db.collection("directRooms")
         .doc(directRoom.id)
         .update({
-          usersHaveRead: usersHaveRead
-            ? usersHaveRead.concat(user.uid)
-            : [userUid],
+          usersHaveRead: usersHaveReadArr,
         });
     }
   };
@@ -127,7 +130,7 @@ function SidebarOption({
     };
   }, [directMessageUid, directMessageRoomId, loading]);
 
-  const defaultRoomId = "CcfrQCURBPLWpn6lj0k8";
+  const defaultRoomId = "A86N0fmTCy8fTd4NS0Ne";
 
   const roomId = useSelector(selectRoomId);
   // Save moves

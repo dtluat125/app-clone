@@ -93,11 +93,15 @@ function LogIn(props) {
           isOnline: true,
         };
 
+
         let userDb
         if (!usersLoading && users) {
           userDb = users?.docs.find((elem) => elem.data().uid === userInf.uid);
-          console.log(userDb.data())
-          dispatch(saveUserInfo({ user: userDb?.data() }));
+          console.log(userDb.data());
+          let userInfo = userDb.data();
+          userInfo.isOnline = true;
+          console.log(userInfo)
+          dispatch(saveUserInfo({ user: userInfo }));
           dispatch(
             docUserId({
               docUserId: userDb?.id,

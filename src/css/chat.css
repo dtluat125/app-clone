@@ -190,6 +190,10 @@
   background-color: rgba(242, 199, 68, 0.1);
 }
 
+.secondary-view__body .message-container.saved {
+  background-color: inherit;
+}
+
 /* RESIZER */
 .resizer {
   width: 5px;
@@ -389,6 +393,7 @@
   position: absolute;
   top: -16px;
   right: 17px;
+  z-index: 90;
 }
 
 .c-message__action__group {
@@ -469,6 +474,10 @@
 }
 /* Message label */
 
+.secondary-view__body .message__label{
+  display: none;
+}
+
 .message__label {
   display: flex;
   padding: 4px 20px;
@@ -491,6 +500,31 @@
   color: rgba(29, 28, 29, 0.7);
   font-size: 13px;
 }
-.message__label__content:hover{
+.message__label__content:hover {
+  text-decoration: underline;
+}
+/* Saved message button */
+.saved-message-button {
+  background: transparent;
+  box-shadow: none;
+  border-bottom: 1px solid
+    rgba(var(--sk_foreground_low_solid, 221, 221, 221), 1);
+  margin: 0;
+  border-radius: 0;
+  padding-top: 10px;
+}
+
+.saved-message-button:hover{
+  background-color: rgba(248, 248, 248, 0.699);
+}
+
+.saved-message__header{
+  margin-left: 20px;
+  font-weight: 700;
+  color: rgb(97, 96, 97);
+  font-size: 13px;
+}
+
+.saved-message__header:hover{
   text-decoration: underline;
 }

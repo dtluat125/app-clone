@@ -97,3 +97,21 @@ body {
   background: rgba(0, 0, 0, 0.9);
 }
 /* emoji handle */
+/* Button custom */
+.c-button-unstyled {
+  background: none !important;
+  border: 0 !important;
+  color: inherit;
+  font: inherit;
+  margin: 0;
+  line-height: inherit;
+  overflow: initial;
+  padding: 0;
+  text-align: initial;
+  vertical-align: initial;
+  cursor: pointer;
+}
+
+.c-button-unstyled:focus {
+  box-shadow: none !important;
+}

@@ -13,22 +13,22 @@ function DropdownMove({ id }) {
   const [roomDetails] = useCollection(id&&db.collection("room").doc(id));
   const [directDetails] = useCollection(id&&db.collection("directRooms").doc(id));
   const details = roomDetails ? roomDetails : directDetails;
-  const name = details?.data()?.name;
+  const name = roomDetails?.data()?.name;
   const userInf = useSelector(selectUser);
   let uids = directDetails?.data()?.uids;
-  let uid = uids?.filter((uid) => {
-    return uid !== userInf.uid;
-  });
-  const directUser = directDetails?.data()?.users
-    ? directDetails?.data()?.users[1]
-    : undefined;
+
+  let directUser = directDetails?.data()?.users.find(user => {
+    return user.uid !== userInf.uid 
+  })
+  if(uids&&uids[0]===uids[1]) directUser = directDetails?.data()?.users[0];
+  console.log(directUser)
   const photoURL = directUser?.photoURL
     ? directUser?.photoURL
     : "default-avatar.jpg";
   //   Enter room
   const dispatch = useDispatch();
   const enterRoomHandle = () => {
-    if (!uid) {
+    if (!uids) {
       dispatch(
         enterDirectMessage({
           directMessageUid: null,
@@ -46,10 +46,11 @@ function DropdownMove({ id }) {
           roomId: null,
         })
       );
+      let searchUid = uids.find(uid => uid!=userInf.uid)
       dispatch(
         enterDirectMessage({
           directMessageRoomId: id,
-          directMessageUid: uids[1],
+          directMessageUid: searchUid,
         })
       );
     }
@@ -58,11 +59,11 @@ function DropdownMove({ id }) {
     <div className="dropdown-item moves-item" role="button" onClick={enterRoomHandle}>
       <div
         className="move__symbol"
-        style={uid ? { backgroundImage: `url(${photoURL})` } : {}}
+        style={uids ? { backgroundImage: `url(${photoURL})` } : {}}
       >
-        {uid ? "" : "#"}
+        {uids ? "" : "#"}
       </div>
-      <span className="move__name">{uid ? directUser?.displayName : name}</span>
+      <span className="move__name">{uids ? directUser?.displayName : name}</span>
     </div>
   );
 }

@@ -4,11 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   enterDirectMessage,
   selectDirectMessageRoom,
+  selectDocId,
   selectRoomId,
+  selectSavedItemId,
+  selectSavedItemsToggle,
   selectSecondaryWorkspaceStatus,
   selectUser,
   selectUserProfileUid,
+  setOnSendingReaction,
+  setSavedItemId,
+  setSavedItemsToggle,
   setSelectedUser,
+  setTime,
   setUserProfileUid,
   showSecondaryWorkspace,
 } from "../../features/appSlice";
@@ -21,7 +28,8 @@ import TurnedInNotOutlinedIcon from "@material-ui/icons/TurnedInNotOutlined";
 import TurnedInIcon from "@material-ui/icons/TurnedIn";
 import Reaction from "./Reaction";
 import firebase from "firebase";
-function Message({
+import { useRef } from "react";
+const Message = React.forwardRef(({
   id,
   userName,
   userImage,
@@ -34,15 +42,16 @@ function Message({
   emojiMartPosition,
   emojiReact,
   reactToggle,
+  savedBy,
   isSaved,
-}) {
+  moveToItem
+}, ref) => {
   const userInf = useSelector(selectUser);
   const displayName = userInf?.uid === uid ? "You" : userName;
   const [onHover, setOnHover] = useState(false);
   const roomId = useSelector(selectRoomId);
   const directId = useSelector(selectDirectMessageRoom);
   // Save selected user Info
-
   const [users, loading] = useCollection(db.collection("users"));
   const userUid = useSelector(selectUserProfileUid);
   const user = users?.docs.find((elem) => elem.data().uid === userUid);
@@ -123,7 +132,7 @@ function Message({
     };
   }, [onSendingUid, userUid, isOpen]);
   const doNothing = () => {};
-
+  const docUserId = useSelector(selectDocId);
   // Handle message actions
 
   // Create reaction
@@ -135,110 +144,147 @@ function Message({
   const replyInThread = () => {};
   const shareMessage = () => {};
   // Save item
+  const savedItemsToggle = useSelector(selectSavedItemsToggle);
   const saveItem = async () => {
-    if (!isSaved) {
-      db.collection("savedItems").add({
-        messageId: id ? id : null,
-        roomId: roomId ? roomId : null,
-        roomDirectId: directId ? directId : null,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-      if (roomId) {
-        db.collection("room")
-          .doc(roomId)
-          .collection("messages")
-          .doc(id)
-          .update({
-            isSaved: true,
+    dispatch(
+      setSavedItemsToggle({
+        savedItemsToggle: !savedItemsToggle,
+      })
+    );
+    let savedByArr = savedBy ? savedBy : [];
+    if (id) {
+      if (!savedBy || !savedBy.includes(docUserId)) {
+        savedByArr.push(docUserId);
+        db.collection("users")
+          .doc(docUserId)
+          .collection("savedItems")
+          .add({
+            messageId: id ? id : null,
+            roomId: roomId ? roomId : null,
+            roomDirectId: directId ? directId : null,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           });
-      } else if (directId) {
-        db.collection("directRooms")
-          .doc(directId)
-          .collection("messages")
-          .doc(id)
-          .update({
-            isSaved: true,
-          });
+
+        if (roomId) {
+          db.collection("room")
+            .doc(roomId)
+            .collection("messages")
+            .doc(id)
+            .update({
+              savedBy: savedByArr,
+            });
+        } else if (directId) {
+          db.collection("directRooms")
+            .doc(directId)
+            .collection("messages")
+            .doc(id)
+            .update({
+              savedBy: savedByArr,
+            });
+        }
+      } else {
+        let i = savedByArr.indexOf(docUserId);
+        savedByArr.splice(i, 1);
+        const snapshot = await db
+          .collection("users")
+          .doc(docUserId)
+          .collection("savedItems")
+          .where("messageId", "==", id)
+          .get();
+        let itemId = null;
+        console.log(snapshot)
+        snapshot.forEach((doc) => (itemId = doc.id));
+        db.collection("users")
+          .doc(docUserId)
+          .collection("savedItems")
+          .doc(itemId)
+          .delete()
+          .then(() => console.log("Delete!"))
+          .catch((err) => console.log(err.message));
+        if (roomId) {
+          db.collection("room")
+            .doc(roomId)
+            .collection("messages")
+            .doc(id)
+            .update({
+              savedBy: savedByArr,
+            });
+        } else if (directId) {
+          db.collection("directRooms")
+            .doc(directId)
+            .collection("messages")
+            .doc(id)
+            .update({
+              savedBy: savedByArr,
+            });
+        }
       }
-    } else {
-      const snapshot = await db
-        .collection("savedItems")
-        .where("messageId", "==", id)
-        .get();
-      let itemId = null;
-      snapshot.forEach((doc) => (itemId = doc.id));
-      console.log(itemId);
-      db.collection("savedItems")
-        .doc(itemId)
-        .delete()
-        .then(() => console.log("Delete!"))
-        .catch((err) => console.log(err.message));
-      if (roomId) {
-        db.collection("room")
-          .doc(roomId)
-          .collection("messages")
-          .doc(id)
-          .update({
-            isSaved: false,
-          });
-      } else if (directId) {
-        db.collection("directRooms")
-          .doc(directId)
-          .collection("messages")
-          .doc(id)
-          .update({
-            isSaved: false,
-          });
-      }
-    }
+    } else return;
   };
   // Send reaction to db
   const sendReaction = (emoji) => {
-    let reactionsArr = reactions ? reactions.slice() : [];
-    const findEmoji = reactionsArr.findIndex((reaction, index) => {
-      if (reaction.title === emoji) {
-        return true;
-      }
-    });
+    dispatch(setOnSendingReaction({
+      onSendingReaction: true
+    }))
+    setTimeout(() => {
+      dispatch(setOnSendingReaction({
+        onSendingReaction: false
+      }), 500)
+    })
+    if (id) {
+      if (isSaved)
+        dispatch(setSavedItemsToggle({ savedItemsToggle: !savedItemsToggle }));
+      let reactionsArr = reactions ? reactions.slice() : [];
+      const findEmoji = reactionsArr.findIndex((reaction, index) => {
+        if (reaction.title === emoji) {
+          return true;
+        }
+      });
 
-    if (findEmoji > -1) {
-      let count = reactionsArr[findEmoji].count;
-      let reactUser = userInf.displayName;
-      let senders = reactionsArr[findEmoji].senders;
-      if (senders.includes(userInf?.displayName)) {
-        let userIndex = senders.indexOf(reactUser);
-        senders.splice(userIndex, 1);
-        count = count - 1;
-      } else {
-        count = count + 1;
+      if (findEmoji > -1) {
+        let count = reactionsArr[findEmoji].count;
+        let reactUser = userInf.displayName;
+        let senders = reactionsArr[findEmoji].senders;
+        if (senders.includes(userInf?.displayName)) {
+          let userIndex = senders.indexOf(reactUser);
+          senders.splice(userIndex, 1);
+          count = count - 1;
+        } else {
+          count = count + 1;
+          senders.push(reactUser);
+        }
+        reactionsArr[findEmoji].senders = senders;
+        reactionsArr[findEmoji].count = count;
+      } else if (findEmoji === -1) {
+        let count = 0;
+        let reactUser = userInf.displayName;
+        let senders = [];
         senders.push(reactUser);
-      }
-      reactionsArr[findEmoji].senders = senders;
-      reactionsArr[findEmoji].count = count;
-    } else if (findEmoji === -1) {
-      let count = 0;
-      let reactUser = userInf.displayName;
-      let senders = [];
-      senders.push(reactUser);
-      reactionsArr.push({
-        title: emoji,
-        senders: senders,
-        count: count + 1,
-      });
-    }
-    if (directId) {
-      db.collection("directRooms")
-        .doc(directId)
-        .collection("messages")
-        .doc(id)
-        .update({
-          reactions: reactionsArr,
+        reactionsArr.push({
+          title: emoji,
+          senders: senders,
+          count: count + 1,
         });
-    } else if (roomId) {
-      db.collection("room").doc(roomId).collection("messages").doc(id).update({
-        reactions: reactionsArr,
-      });
-    }
+      }
+      if (directId) {
+        console.log(id);
+        db.collection("directRooms")
+          .doc(directId)
+          .collection("messages")
+          .doc(id)
+          .update({
+            reactions: reactionsArr,
+          });
+      } else if (roomId) {
+        db.collection("room")
+          .doc(roomId)
+          .collection("messages")
+          .doc(id)
+          .update({
+            reactions: reactionsArr,
+          });
+      }
+    } else return;
   };
 
   useEffect(() => {
@@ -252,14 +298,33 @@ function Message({
       sendReaction(emojiReact);
     }
   }, [reactToggle]);
+
+  // Scroll
+  const savedItemId = useSelector(selectSavedItemId)
+  useEffect(() => {
+    if (savedItemId) {
+      ref?.current?.scrollIntoView({
+        
+      })
+    }
+
+    return () => {
+      setTimeout(() => {dispatch(setSavedItemId({ savedItemId: null }))}, 1000)
+      
+    };
+  }, [roomId, directId, savedItemId]);
+  // Ref 
+  const actionRef = useRef(null);
+  
   return (
     <div
+      ref={ref}
       className={
         onHover
-          ? isSaved
+          ? savedBy?.includes(docUserId)
             ? "message-container active saved"
             : "message-container active"
-          : isSaved
+          : savedBy?.includes(docUserId)
           ? "message-container saved"
           : "message-container"
       }
@@ -267,8 +332,7 @@ function Message({
       onMouseOut={notHoverHandler}
       id={"a" + id}
     >
-      
-      {isSaved && (
+      {savedBy?.includes(docUserId) && (
         <div className="message__label">
           <div className="message__label__icon">{<TurnedInIcon />}</div>
           <div role="button" className="message__label__content">
@@ -328,6 +392,8 @@ function Message({
             }
           >
             <div className="c-message__action__group">
+              {!isSaved&&
+              <>
               <ActionButton
                 action={sendReaction}
                 emoji={"✅"}
@@ -343,6 +409,8 @@ function Message({
                 emoji={"🙌"}
                 title="Nicely done"
               />
+              </>
+              }
               <ActionButton
                 onSelect={addReaction}
                 action={openMovingEmojiMart}
@@ -362,7 +430,7 @@ function Message({
               <ActionButton
                 action={saveItem}
                 emoji={
-                  !isSaved ? (
+                  !savedBy?.includes(docUserId) ? (
                     <TurnedInNotOutlinedIcon />
                   ) : (
                     <TurnedInIcon style={{ color: "red" }} />
@@ -377,5 +445,6 @@ function Message({
     </div>
   );
 }
+)
 
 export default Message;

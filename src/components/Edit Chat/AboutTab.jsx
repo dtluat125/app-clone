@@ -29,7 +29,7 @@ function AboutTab({
   const dispatch = useDispatch();
   const [name, setName] = useState(roomName);
   const [des, setDes] = useState(roomDes ? roomDes : "");
-  const defaultRoomId = "CcfrQCURBPLWpn6lj0k8";
+  const defaultRoomId = "A86N0fmTCy8fTd4NS0Ne";
   useEffect(() => {
     setName(roomName);
     setDes(roomDes ? roomDes : "");

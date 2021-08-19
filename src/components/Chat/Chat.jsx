@@ -7,12 +7,15 @@ import {
   enterRoom,
   selectChosenUser,
   selectDirectMessageRoom,
+  selectOnSendingReaction,
   selectRoomId,
+  selectSavedItemId,
   selectSecondaryWorkspaceStatus,
   selectUser,
   selectUserDirect,
   setDirectUser,
   setRoomDetails,
+  setSavedItemId,
   setUserProfileUid,
   showSecondaryWorkspace,
 } from "../../features/appSlice";
@@ -27,16 +30,16 @@ import DehazeIcon from "@material-ui/icons/Dehaze";
 import Emojify from "react-emojione";
 import { Picker } from "emoji-mart";
 
-function Chat() {
+function Chat(props) {
   const dispatch = useDispatch();
   const chatRef = useRef(null);
   const user = useSelector(selectUser);
-  const defaultRoomId = "CcfrQCURBPLWpn6lj0k8";
+  const defaultRoomId = "A86N0fmTCy8fTd4NS0Ne";
   // Room message
   const roomId = useSelector(selectRoomId);
   const directMessageUid = useSelector(selectUserDirect);
   const [emojiReact, setEmojiReact] = useState("");
-  const [reactToggle, setReactToggle] = useState(false)
+  const [reactToggle, setReactToggle] = useState(false);
   if (!roomId && !directMessageUid) {
     dispatch(
       enterRoom({
@@ -83,7 +86,7 @@ function Chat() {
   const addEmoji = (e) => {
     let emoji = e.native;
     setEmojiReact(emoji);
-    setReactToggle(!reactToggle)
+    setReactToggle(!reactToggle);
   };
   // Direct message
   const roomDirectId = useSelector(selectDirectMessageRoom);
@@ -106,18 +109,33 @@ function Chat() {
   const directStatus = directUser?.data()?.isOnline;
   //
   // Open profile
+  // Scroll to saved message
+  const savedRef = useRef(null);
+  const savedItemId = useSelector(selectSavedItemId);
+  const onSendingReaction = useSelector(selectOnSendingReaction);
   // Scroll
   useEffect(() => {
-    if (roomMessages || roomDirectMessages)
+    console.log(savedItemId);
+    if (
+      (roomMessages || roomDirectMessages) &&
+      !savedItemId &&
+      !onSendingReaction
+    )
       chatRef?.current?.scrollIntoView({
         behavior: "smooth",
       });
-  }, [roomMessages, roomDirectMessages, roomLoading, directLoading]);
+  }, [
+    roomMessages && roomMessages?.docs.length,
+    roomDirectMessages,
+    roomLoading,
+    directLoading,
+  ]);
   //   Create block message
   const blocksMessage = {};
   roomId
     ? roomMessages?.docs.map((doc) => {
-        const { message, timestamp, user, userImage, uid, isSaved } = doc.data();
+        const { message, timestamp, user, userImage, uid, savedBy } =
+          doc.data();
         const time = new Date(timestamp?.toDate());
         var date = time.getDate();
         var year = time.getFullYear();
@@ -138,6 +156,7 @@ function Chat() {
         blocksMessage[config]["timestamp"] = timestamp;
         blocksMessage[config].push(
           <Message
+            ref={doc.id === savedItemId ? savedRef : null}
             emojiMartPosition={position}
             onClick={openEmojiMart}
             key={doc.id}
@@ -149,14 +168,15 @@ function Chat() {
             uid={uid}
             reactions={doc.data().reactions}
             isDirect={false}
-            emojiReact = {emojiReact}
-            reactToggle = {reactToggle}
-            isSaved = {isSaved}
+            emojiReact={emojiReact}
+            reactToggle={reactToggle}
+            savedBy={savedBy}
           />
         );
       })
     : roomDirectMessages?.docs.map((doc) => {
-        const { message, timestamp, user, userImage, uid, isSaved } = doc.data();
+        const { message, timestamp, user, userImage, uid, savedBy } =
+          doc.data();
         const time = new Date(timestamp?.toDate());
         var date = time.getDate();
         var year = time.getFullYear();
@@ -178,6 +198,7 @@ function Chat() {
         blocksMessage[config]["timestamp"] = timestamp;
         blocksMessage[config].push(
           <Message
+            ref={doc.id === savedItemId ? savedRef : null}
             emojiMartPosition={position}
             onClick={openEmojiMart}
             key={doc.id}
@@ -188,8 +209,10 @@ function Chat() {
             uid={uid}
             isDirect={true}
             emojiReact={emojiReact}
-            reactToggle = {reactToggle}
-            isSaved = {isSaved}
+            reactToggle={reactToggle}
+            savedBy={savedBy}
+            reactions={doc.data().reactions}
+            id={doc.id}
           />
         );
       });
@@ -254,6 +277,7 @@ function Chat() {
   let windowWidth;
   let chatWidth;
   const isSecondaryWorkspaceOpen = useSelector(selectSecondaryWorkspaceStatus);
+  const [collapse, setCollapse] = useState("false");
   useEffect(() => {
     console.log("On load");
     const chatContainer = document.querySelector(".chat-container");
@@ -265,26 +289,42 @@ function Chat() {
     const secondaryWorkspace = document.querySelector(
       ".secondary-view-container"
     );
+
     const reportWindowSize = () => {
       windowWidth = window.innerWidth;
       chatWidth = chatContainer.offsetWidth;
-      console.log(sidebarToggler);
-      if (windowWidth < 706 && windowWidth >= 576) {
+      if (
+        chatWidth < 400 &&
+        !sidebarContainer?.classList.contains("sidebar-collapse")
+      ) {
         sidebarContainer?.classList.add("sidebar-collapse");
-        sidebarToggler?.classList.remove("collapse");
-        chatContainer?.classList.remove("collapse");
-      } else if (windowWidth < 576 && isSecondaryWorkspaceOpen) {
-        chatContainer?.classList.add("collapse");
-      } else if (windowWidth < 576 || chatWidth < 400) {
-        sidebarContainer?.classList.add("sidebar-collapse");
-        sidebarToggler?.classList.remove("collapse");
-        chatContainer?.classList.remove("collapse");
-      } else {
-        chatContainer?.classList.remove("collapse");
-        sidebarToggler?.classList.add("collapse");
+        setCollapse(false);
+        console.log("3");
+
+        if (windowWidth < 706) {
+          sidebarContainer?.classList.add("sidebar-collapse");
+          setCollapse(false);
+          chatContainer?.classList.remove("collapse");
+          console.log("1");
+          if (windowWidth <= 576 && isSecondaryWorkspaceOpen) {
+            chatContainer?.classList.add("collapse");
+            console.log("2");
+          }
+          if (!isSecondaryWorkspaceOpen) {
+            chatContainer?.classList.remove("collapse");
+            console.log(3);
+          }
+        }
+      } else if (
+        chatWidth >= 600 &&
+        sidebarContainer?.classList.contains("sidebar-collapse")
+      ) {
         sidebarContainer?.classList.remove("sidebar-collapse");
-        sidebarContainer?.classList.remove("sidebar-float");
+        console.log(sidebarToggler);
+        setCollapse(true);
+        console.log("4");
       }
+
       // Collapse handler
       const sidebarCollapse = document.querySelector(".sidebar-collapse");
       const closeSidebar = () => {
@@ -293,11 +333,13 @@ function Chat() {
       chatContainer.addEventListener("click", closeSidebar);
       secondaryWorkspace.addEventListener("click", closeSidebar);
     };
+
     reportWindowSize();
     window.addEventListener("resize", reportWindowSize);
   });
 
   //
+  console.log(position);
 
   return (
     <div className="chat-container">
@@ -311,8 +353,11 @@ function Chat() {
               className="emojis-container-moving"
               style={{
                 position: "fixed",
-                right: position.positionInfo.x-174,
-                top: (position.positionInfo.y-442)>33?(position.positionInfo.y-442):33,
+                right: window.innerWidth - position.positionInfo.right + 18,
+                top:
+                  position.positionInfo.y - 442 > 33
+                    ? position.positionInfo.y - 442
+                    : 33,
                 zIndex: 99,
               }}
             >
@@ -323,7 +368,11 @@ function Chat() {
             <div className="chat__header__left">
               <div
                 onClick={openSidebar}
-                className="sidebar-toggle-button c-button-unstyled chat__header__left__button"
+                className={
+                  collapse
+                    ? "sidebar-toggle-button c-button-unstyled chat__header__left__button collapse"
+                    : "sidebar-toggle-button c-button-unstyled chat__header__left__button "
+                }
               >
                 <span>
                   <DehazeIcon />
@@ -412,7 +461,6 @@ function Chat() {
           <div className="chat__footer">
             {(members?.includes(user.uid) && roomId) || !roomId ? (
               <ChatInput
-                chatRef={chatRef}
                 channelId={roomId ? roomId : roomDirectId}
                 channelName={roomId ? roomDetails?.data()?.name : directTitle}
                 isDirect={roomId ? false : true}

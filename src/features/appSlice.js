@@ -17,9 +17,18 @@ export const appSlice = createSlice({
         roomDetails: null,
         directUser: null,
         isModalOpen: null,
-        moves: []
+        moves: [],
+        savedItemsToggle: false,
+        savedItemId: null,
+        onSendingReaction: false,
     },
     reducers: {
+        setOnSendingReaction: (state, action) => {
+            state.onSendingReaction = action.payload.onSendingReaction
+        },
+        setSavedItemId: (state, action) => {
+            state.savedItemId = action.payload.savedItemId
+        },
         enterRoom: (state, action) =>{
             state.roomId = action.payload.roomId;
         },
@@ -47,6 +56,8 @@ export const appSlice = createSlice({
             state.directUser = null;
             state.isModalOpen = null;
             state.moves = [];
+            state.savedItemsToggle = false;
+            state.isOnline = false
 
         },
         getDataState: (state, action) => {
@@ -82,11 +93,16 @@ export const appSlice = createSlice({
         },
         setMoves: (state, action) => {
             state.moves = action.payload.moves
+        },
+        setSavedItemsToggle: (state, action) => {
+            state.savedItemsToggle = action.payload.savedItemsToggle;
         }
      }
 });
 
-export const {setMoves, setIsModalOpen, setDirectUser, setRoomDetails, setTime, sendMessage, setSelectedUser, showSecondaryWorkspace,enterRoom, saveUserInfo, docUserId, reset, getDataState, enterDirectMessage, setUserProfileUid} = appSlice.actions;
+export const {setOnSendingReaction,setSavedItemId,setSavedItemsToggle,setMoves, setIsModalOpen, setDirectUser, setRoomDetails, setTime, sendMessage, setSelectedUser, showSecondaryWorkspace,enterRoom, saveUserInfo, docUserId, reset, getDataState, enterDirectMessage, setUserProfileUid} = appSlice.actions;
+
+export const selectSavedItemsToggle = state => state.app.savedItemsToggle;
 
 export const selectRoomId = state => state.app.roomId;
 
@@ -117,4 +133,8 @@ export const selectDirectUser = state => state.app.directUser
 export const selectModalState = state => state.app.isModalOpen
 
 export const selectMoves = state => state.app.moves
+
+export const selectSavedItemId = state => state.app.savedItemId
+
+export const selectOnSendingReaction = state => state.app.savedItemId
 export default appSlice.reducer;
