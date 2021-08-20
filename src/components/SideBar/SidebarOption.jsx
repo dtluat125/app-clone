@@ -9,6 +9,7 @@ import {
   selectUser,
   selectUserDirect,
   setMoves,
+  setOnReplyInThread,
   setSelectedUser,
   setUserProfileUid,
   showSecondaryWorkspace,
@@ -162,6 +163,9 @@ function SidebarOption({
     dispatch(setSelectedUser({
       selectedUser: null
     }))
+    dispatch(setOnReplyInThread({
+      onReplyInThread: null
+    }))
   }
 
   //
@@ -213,18 +217,18 @@ function SidebarOption({
                   : "no-status"
               }
             />
-            {title ? title : email}
-          </div>
-        )}
-        {!(
+            <span className={!(
           usersHaveRead?.includes(userUid) ||
           usersHaveReadRoom?.includes(userUid)
         ) &&
-          !icon && (
+          !icon?"bold":"" }>{title ? title : email}</span>
+          </div>
+        )}
+        {/* { (
             <span class="position-absolute  translate-middle p-1 bg-danger border border-light rounded-circle unread-notification">
               <span class="visually-hidden">New alerts</span>
             </span>
-          )}
+          )} */}
       </div>
     );
   else return <div />;

@@ -11,6 +11,7 @@ import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
 import AutoSearchButton from "./AutoSearchButton";
 import SearchMode from "./SearchMode";
 import SuggestionList from "./SuggestionList";
+import CloseIcon from "@material-ui/icons/Close";
 function DropdownSearchMenu() {
   
   const [onChannels, setOnChannels] = useState(false);
@@ -48,6 +49,10 @@ function DropdownSearchMenu() {
   const closeMode = () => {
     setFilterTex("");
   };
+  // close Search
+  const closeSearch = () => {
+    document.querySelector("#dropdownMenuSearchHeader").click();
+  }
   return (
     <div
       className="dropdown-menu"
@@ -73,6 +78,9 @@ function DropdownSearchMenu() {
               style={{ borderBottomColor: "none" }}
               placeholder="Search because it's faster than scrolling"
             />
+          </div>
+          <div role="button" className="c-search__close-button" onClick = {closeSearch}>
+              <CloseIcon/>
           </div>
         </div>
         {!onChannels && !onUsers && (

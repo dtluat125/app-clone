@@ -21,8 +21,16 @@ export const appSlice = createSlice({
         savedItemsToggle: false,
         savedItemId: null,
         onSendingReaction: false,
+        onReplyInThread: null,
+        threadMessageId: null
     },
     reducers: {
+        setThreadMessageId: (state, action) => {
+            state.threadMessageId = action.payload.threadMessageId
+        },
+        setOnReplyInThread: (state, action) => {
+            state.onReplyInThread = action.payload.onReplyInThread
+        },
         setOnSendingReaction: (state, action) => {
             state.onSendingReaction = action.payload.onSendingReaction
         },
@@ -100,7 +108,11 @@ export const appSlice = createSlice({
      }
 });
 
-export const {setOnSendingReaction,setSavedItemId,setSavedItemsToggle,setMoves, setIsModalOpen, setDirectUser, setRoomDetails, setTime, sendMessage, setSelectedUser, showSecondaryWorkspace,enterRoom, saveUserInfo, docUserId, reset, getDataState, enterDirectMessage, setUserProfileUid} = appSlice.actions;
+export const {setThreadMessageId, setOnReplyInThread,setOnSendingReaction,setSavedItemId,setSavedItemsToggle,setMoves, setIsModalOpen, setDirectUser, setRoomDetails, setTime, sendMessage, setSelectedUser, showSecondaryWorkspace,enterRoom, saveUserInfo, docUserId, reset, getDataState, enterDirectMessage, setUserProfileUid} = appSlice.actions;
+
+export const selectThreadMessageId = state => state.app.threadMessageId;
+
+export const selectOnReplyInThread = state => state.app.onReplyInThread;
 
 export const selectSavedItemsToggle = state => state.app.savedItemsToggle;
 

@@ -114,19 +114,27 @@ function Chat(props) {
   const savedItemId = useSelector(selectSavedItemId);
   const onSendingReaction = useSelector(selectOnSendingReaction);
   // Scroll
+
   useEffect(() => {
     console.log(savedItemId);
     if (
       (roomMessages || roomDirectMessages) &&
       !savedItemId &&
       !onSendingReaction
-    )
+    ) {
+      console.log("SCROLLL");
       chatRef?.current?.scrollIntoView({
         behavior: "smooth",
       });
+      setTimeout(() => {
+        chatRef?.current?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }, 500);
+    }
   }, [
-    roomMessages && roomMessages?.docs.length,
-    roomDirectMessages,
+    roomMessages?.docs.length,
+    roomDirectMessages?.docs.length,
     roomLoading,
     directLoading,
   ]);
@@ -171,6 +179,7 @@ function Chat(props) {
             emojiReact={emojiReact}
             reactToggle={reactToggle}
             savedBy={savedBy}
+            messageRoomId = {roomId}
           />
         );
       })
@@ -213,6 +222,7 @@ function Chat(props) {
             savedBy={savedBy}
             reactions={doc.data().reactions}
             id={doc.id}
+            messageRoomDirectId = {roomDirectId}
           />
         );
       });
@@ -385,7 +395,8 @@ function Chat(props) {
                   data-bs-target={"#" + "a" + roomId}
                   className="chat__header__left__button"
                 >
-                  <span>#{roomDetails?.data()?.name}</span>
+                  <span className="chat__header__icon">#</span>
+                  <span>{roomDetails?.data()?.name}</span>
                 </div>
               ) : (
                 <div

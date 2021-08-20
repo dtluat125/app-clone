@@ -100,6 +100,7 @@ function Header() {
           <Dropdown.Menu
             className="dropdown-menu"
             aria-labelledby="historyDropdown"
+            style={{width: 360}}
           >
             <div aria-hidden="true" className="c-menu_item__header">
               Recent
