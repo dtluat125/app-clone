@@ -14,6 +14,9 @@ import {
   selectDocId,
   selectMoves,
   selectUser,
+  setOnOpenProfile,
+  setOnReplyInThread,
+  setOnSave,
   setSelectedUser,
   setUserProfileUid,
   showSecondaryWorkspace,
@@ -25,7 +28,7 @@ function Header() {
   const userInf = useSelector(selectUser);
   const [users, loading] = useCollection(db.collection("users"));
   const user = users?.docs.find((elem) => elem.data().uid === userInf?.uid);
-  const [onViewing, setOnViewing] = useState(false)
+  const [onViewing, setOnViewing] = useState(false);
   const dispatch = useDispatch();
   const logOut = async () => {
     await auth
@@ -48,7 +51,7 @@ function Header() {
   const photoURL = user?.data().photoURL;
   // Open profile
   const openProfile = () => {
-    setOnViewing(true)
+    setOnViewing(true);
     dispatch(
       setUserProfileUid({
         userUid: userInf?.uid,
@@ -59,11 +62,31 @@ function Header() {
         isShowingSecondaryWorkspace: true,
       })
     );
+    dispatch(
+      showSecondaryWorkspace({
+        isShowingSecondaryWorkspace: true,
+      })
+    );
+
+    dispatch(
+      setOnReplyInThread({
+        onReplyInThread: null,
+      })
+    );
+    dispatch(
+      setOnSave({
+        onSave: null,
+      })
+    );
+    dispatch(
+      setOnOpenProfile({
+        onOpenProfile: true,
+      })
+    );
   };
 
-  
   useEffect(() => {
-    if(onViewing){
+    if (onViewing) {
       dispatch(
         setSelectedUser({
           selectedUser: {
@@ -75,13 +98,12 @@ function Header() {
             whatIDo: user?.data().whatIDo,
           },
         })
-      )
-    };
-    return () => {
-      setOnViewing(false)
+      );
     }
-  }, [onViewing])
-
+    return () => {
+      setOnViewing(false);
+    };
+  }, [onViewing]);
 
   // Get Moves
   const moves = useSelector(selectMoves);
@@ -100,13 +122,13 @@ function Header() {
           <Dropdown.Menu
             className="dropdown-menu"
             aria-labelledby="historyDropdown"
-            style={{width: 360}}
+            style={{ width: 360 }}
           >
             <div aria-hidden="true" className="c-menu_item__header">
               Recent
             </div>
             {moves?.map((id) => {
-              return <DropdownMove key = {id} id={id} />;
+              return <DropdownMove key={id} id={id} />;
             })}
           </Dropdown.Menu>
         </Dropdown>

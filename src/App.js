@@ -22,6 +22,7 @@ import {
   selectChosenUser,
   selectDirectMessageRoom,
   selectDirectUser,
+  selectOnMainSave,
   selectRoomDetails,
   selectRoomId,
   selectUser,
@@ -30,6 +31,7 @@ import CreateChannel from "./components/Edit Chat/CreateChannel";
 import RemoveAlertModal from "./components/Edit Chat/RemoveAlertModal";
 import $ from "jquery";
 import InitAccount from "./components/InitAccount/InitAccount";
+import MainSave from "./components/MainSave/MainSave";
 function App() {
   const [user, userLoading] = useAuthState(auth);
   // set status to Online
@@ -115,7 +117,7 @@ function App() {
   // }, [toggle]);
   // Get user info
   const userInf = useSelector(selectUser);
-
+  const onMainSave = useSelector(selectOnMainSave)
   return (
     <div className="App" onresize>
       {/* <LogIn/> */}
@@ -144,7 +146,8 @@ function App() {
             <div className="work-space-body">
               <SideBar width={sideBarWidth} />
               <Reiszer onMouseDown={handleResizeSideBar} />
-              <Chat width={profileWidth} onClick={handleToggle} />
+              {onMainSave?<MainSave/>:
+              <Chat width={profileWidth} onClick={handleToggle} />}
               <Reiszer onMouseDown={handleResizeChat} />
               <SecondaryView width={profileWidth} resize={resize} />
             </div>

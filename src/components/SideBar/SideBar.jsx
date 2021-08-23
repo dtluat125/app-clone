@@ -67,7 +67,7 @@ function SideBar({ width }) {
             icon={<TurnedInNotOutlinedIcon />}
             savedItems = {true}
           />
-          <SidebarCollapse
+          {/* <SidebarCollapse
             options={[
               <SidebarOption
                 title="All Unreads"
@@ -83,7 +83,7 @@ function SideBar({ width }) {
             id={"browseslack"}
             title="Browse Slack"
             icon={<MoreVertIcon />}
-          />
+          /> */}
 
           <SidebarCollapse
             title="Channels"

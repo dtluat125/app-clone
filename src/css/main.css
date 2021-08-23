@@ -115,3 +115,8 @@ body {
 .c-button-unstyled:focus {
   box-shadow: none !important;
 }
+
+a:active, a:focus, a:hover {
+  color: rgba(var(--sk_highlight_hover,11,76,140),1);
+  text-decoration: underline;
+}

@@ -7,6 +7,7 @@ import {
   enterRoom,
   selectChosenUser,
   selectDirectMessageRoom,
+  selectOnMainSave,
   selectOnSendingReaction,
   selectRoomId,
   selectSavedItemId,
@@ -318,6 +319,7 @@ function Chat(props) {
           console.log("1");
           if (windowWidth <= 576 && isSecondaryWorkspaceOpen) {
             chatContainer?.classList.add("collapse");
+            secondaryWorkspace?.classList.add("fill")
             console.log("2");
           }
           if (!isSecondaryWorkspaceOpen) {
@@ -346,11 +348,11 @@ function Chat(props) {
 
     reportWindowSize();
     window.addEventListener("resize", reportWindowSize);
-  });
+  },);
 
   //
   console.log(position);
-
+// Save main page
   return (
     <div className="chat-container">
       {loading || directLoading || usersLoading ? (

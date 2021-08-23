@@ -9,14 +9,23 @@ import {
   selectDirectMessageRoom,
   selectDocId,
   selectLocalTime,
+  selectOnMainSave,
+  selectOnOpenProfile,
   selectOnReplyInThread,
+  selectOnSave,
   selectOnSendingReaction,
   selectRoomId,
   selectSavedItemsToggle,
   selectSecondaryWorkspaceStatus,
+  selectThreadMessageDirectId,
   selectThreadMessageId,
+  selectThreadMessageRoomId,
   selectUser,
   selectUserProfileUid,
+  setOnMainSave,
+  setOnOpenProfile,
+  setOnReplyInThread,
+  setOnSave,
   setSavedItemId,
   setSelectedUser,
   setUserProfileUid,
@@ -29,6 +38,7 @@ import Message from "./Chat/Message";
 import { Picker } from "emoji-mart";
 import SmallLoader from "./SmallLoader";
 import ChatInput from "./Chat/ChatInput";
+import AspectRatioRoundedIcon from "@material-ui/icons/AspectRatioRounded";
 function SecondaryView({ width, resize }) {
   const selectedUser = useSelector(selectChosenUser);
   const photoURL = selectedUser?.photoURL;
@@ -49,6 +59,7 @@ function SecondaryView({ width, resize }) {
   const [users, usersLoading] = useCollection(db.collection("users"));
   const savedItemsToggle = useSelector(selectSavedItemsToggle);
   const [rooms] = useCollection(db.collection("room"));
+
   const [roomMessages] = useCollection(
     currentRoomId &&
       db.collection("room").doc(currentRoomId).collection("messages")
@@ -74,12 +85,23 @@ function SecondaryView({ width, resize }) {
       })
     );
     dispatch(
-      setUserProfileUid({
-        userUid: null,
+      setOnOpenProfile({
+        onOpenProfile: null,
       })
     );
-
+    dispatch(
+      setOnReplyInThread({
+        onReplyInThread: null,
+      })
+    );
+    dispatch(
+      setOnSave({
+        onSave: null,
+      })
+    );
     console.log("close");
+    const chatContainer = document.querySelector(".chat-container");
+    chatContainer?.classList.remove("collapse");
   };
   // Get toggle state
   console.log(savedItemsToggle);
@@ -108,13 +130,31 @@ function SecondaryView({ width, resize }) {
   // Get saved Items
   const onSendingReaction = useSelector(selectOnSendingReaction);
   let savedItemsArr = [];
+
   const getSavedMessages = () => {
     let arr = savedItemsInfo?.docs.map(async (doc) => {
       const messageId = doc.data().messageId;
       const roomId = doc.data().roomId;
       const roomDirectId = doc.data().roomDirectId;
+      const replyTo = doc.data().replyTo;
       let messageRef = null;
-      if (roomId) {
+      if (replyTo) {
+        console.log("REPLY TO");
+        if (roomId)
+          messageRef = db
+            .collection("room")
+            .doc(roomId)
+            .collection("messages")
+            .doc(replyTo)
+            .get();
+        else if (roomDirectId)
+          messageRef = db
+            .collection("directRooms")
+            .doc(roomDirectId)
+            .collection("messages")
+            .doc(replyTo)
+            .get();
+      } else if (roomId) {
         messageRef = db
           .collection("room")
           .doc(roomId)
@@ -223,31 +263,90 @@ function SecondaryView({ width, resize }) {
       dispatch(setSavedItemId({ savedItemId: info.id }));
     }
   };
-  console.log(currentRoomId)
+  console.log(currentRoomId);
   // Thread handle
   const onReplyInThread = useSelector(selectOnReplyInThread);
   const threadMessageId = useSelector(selectThreadMessageId);
+  const threadMessageRoomId = useSelector(selectThreadMessageRoomId);
+  const threadMessageDirectId = useSelector(selectThreadMessageDirectId);
   const [threadMessage, threadLoading] = useDocument(
     threadMessageId &&
-      (currentRoomId
+      (threadMessageRoomId
         ? db
             .collection("room")
-            .doc(currentRoomId)
+            .doc(threadMessageRoomId)
             .collection("messages")
             .doc(threadMessageId)
-        : currentDirectId
+        : threadMessageDirectId
         ? db
             .collection("directRooms")
-            .doc(currentDirectId)
+            .doc(threadMessageDirectId)
             .collection("messages")
             .doc(threadMessageId)
         : undefined)
   );
 
+  const [subMessages] = useCollection(
+    threadMessageId &&
+      (threadMessageRoomId
+        ? db
+            .collection("room")
+            .doc(threadMessageRoomId)
+            .collection("messages")
+            .doc(threadMessageId)
+            .collection("subMessages")
+            .orderBy("timestamp", "asc")
+        : threadMessageDirectId
+        ? db
+            .collection("directRooms")
+            .doc(threadMessageDirectId)
+            .collection("messages")
+            .doc(threadMessageId)
+            .collection("subMessages")
+            .orderBy("timestamp", "asc")
+        : undefined)
+  );
+  const openProfile = useSelector(selectOnOpenProfile);
+  const onSave = useSelector(selectOnSave);
+  const [replyRoom] = useDocument(
+    threadMessageId &&
+      (threadMessageRoomId
+        ? db.collection("room").doc(threadMessageRoomId)
+        : threadMessageDirectId
+        ? db.collection("directRooms").doc(threadMessageDirectId)
+        : undefined)
+  );
+  const threadName =
+    threadMessageId &&
+    (threadMessageRoomId
+      ? replyRoom?.data().name
+      : threadMessageDirectId
+      ? replyRoom?.data().users?.find((user) => {
+          if (users[0] === users[1]) return user.uid === userInf.uid;
+          else return userInf.uid !== user.uid;
+        })?.displayName
+      : undefined);
+// Open main save page
+const openSavePage = () => {
+  dispatch(setOnMainSave({
+    onMainSave: true
+  }))
+  closeWorkspace()
+  dispatch(enterRoom({
+    roomId: null
+  }))
+  dispatch(enterDirectMessage({
+    directMessageRoomId: null,
+    directMessageUid: null
+  }))
+
+  
+}
+const onMainSave = useSelector(selectOnMainSave)
   return (
     <div
       className={
-        isOpen ? "secondary-view-container active" : "secondary-view-container"
+        (isOpen&&!(onSave&&onMainSave)) ? "secondary-view-container active" : "secondary-view-container"
       }
       style={{ width: width }}
     >
@@ -272,26 +371,34 @@ function SecondaryView({ width, resize }) {
         <div className="secondary-view__header__left">
           <div className="secondary-view__header__left__inner">
             <span className="secondary-view__mode-name">
-              {selectedUser
+              {openProfile
                 ? "Profile"
                 : onReplyInThread
                 ? "Thread"
                 : "Saved items"}
             </span>
-            <span className="thread-name">Thread name here</span>
+            {onReplyInThread && (
+              <span className="thread-name">{threadName}</span>
+            )}
           </div>
         </div>
         <div className="secondary-view__header__right">
+          {onSave && (
+            <button className="c-button-unstyled close-button" title="Move to main page" onClick={openSavePage}>
+              <AspectRatioRoundedIcon />
+            </button>
+          )}
           <button
             className="c-button-unstyled close-button"
             onClick={closeWorkspace}
+            title="Close"
           >
             <CloseIcon />
           </button>
         </div>
       </div>
 
-      {selectedUser && (
+      {openProfile && (
         <div className="secondary-view__body">
           <div className="secondary-view__body__inner">
             <div className="member-profile__avatar-container">
@@ -347,18 +454,21 @@ function SecondaryView({ width, resize }) {
         </div>
       )}
 
-      {!selectedUser && !onReplyInThread && (
-        <div className="secondary-view__body">
+      {onSave && (
+        <div className="secondary-view__body saved-mode">
           {itemsLoading ? (
             <SmallLoader />
           ) : (
             <>
               {savedMessages?.map((doc) => {
                 let savedMessageInfo = savedItemsInfo?.docs.find((docc) => {
-                  return docc.data().messageId === doc.id;
+                  if (docc.data().replyTo)
+                    return docc.data().replyTo === doc.id;
+                  else return docc.data().messageId === doc.id;
                 });
                 let name = "";
                 let info = {};
+
                 if (savedMessageInfo?.data().roomId) {
                   name = rooms?.docs
                     .find((doc) => doc.id === savedMessageInfo.data().roomId)
@@ -369,6 +479,10 @@ function SecondaryView({ width, resize }) {
                   name = "Direct message";
                   info.savedMessageInfo = savedMessageInfo.data();
                 }
+                if (savedMessageInfo?.data().replyTo) {
+                  console.log("ALOOO ", name);
+                }
+
                 if (doc.data()) {
                   const {
                     message,
@@ -419,7 +533,7 @@ function SecondaryView({ width, resize }) {
 
       {onReplyInThread && (
         <div className="secondary-view__body">
-          {threadLoading||!threadMessage ? (
+          {threadLoading || !threadMessage ? (
             <SmallLoader />
           ) : (
             <>
@@ -442,14 +556,54 @@ function SecondaryView({ width, resize }) {
                       width={width}
                       id={threadMessageId}
                       reactions={threadMessage.data()?.reactions}
-                      inThread = {true}
+                      inThread={true}
                     />
                   </div>
                 )}
-                <ChatInput
-                inThread = {true}
-                threadMessageId = {threadMessageId}
-                />
+                {subMessages?.docs.length > 0 && (
+                  <div className="c-thread__seperator">
+                    <div className="c-thread__seperator__inner">
+                      <span className="c-thread__seperator__count">
+                        {subMessages?.docs.length > 1
+                          ? subMessages?.docs.length + " replies"
+                          : subMessages?.docs.length + " reply"}
+                      </span>
+                      <hr className="c-thread__seperator__line" />
+                    </div>
+                  </div>
+                )}
+                {subMessages?.docs.map((subMessage) => {
+                  const {
+                    message,
+                    timestamp,
+                    user,
+                    userImage,
+                    uid,
+                    savedBy,
+                    reactions,
+                  } = subMessage.data();
+                  return (
+                    <Message
+                      emojiMartPosition={position}
+                      onClick={openEmojiMart}
+                      key={subMessage.id}
+                      message={message}
+                      timestamp={timestamp}
+                      userName={user}
+                      userImage={userImage}
+                      uid={uid}
+                      savedBy={savedBy}
+                      emojiReact={emojiReact}
+                      reactToggle={reactToggle}
+                      label=""
+                      width={width}
+                      id={subMessage.id}
+                      reactions={reactions}
+                      replyTo={threadMessageId}
+                    />
+                  );
+                })}
+                <ChatInput inThread={true} threadMessageId={threadMessageId} />
               </div>
             </>
           )}

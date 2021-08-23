@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { enterDirectMessage, selectChosenUser, selectLocalTime, selectMessageSend, selectUser, sendMessage, setTime, showSecondaryWorkspace } from '../../features/appSlice'
+import { enterDirectMessage, selectChosenUser, selectLocalTime, selectMessageSend, selectUser, sendMessage, setOnOpenProfile, setOnReplyInThread, setOnSave, setTime, showSecondaryWorkspace } from '../../features/appSlice'
 import SmallLoader from '../SmallLoader'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
@@ -13,9 +13,19 @@ function ProfileModal({loading}) {
     const uid = selectedUser?.uid;
     const email = selectedUser?.email;
     const isOnline = selectedUser?.isOnline
-    const openSecondView = () => {
+    const openProfile = () => {
         dispatch(showSecondaryWorkspace({
             isShowingSecondaryWorkspace: true
+        }));
+        
+        dispatch(setOnReplyInThread({
+            onReplyInThread: null,
+        }))
+        dispatch(setOnSave({
+            onSave: null
+        }))
+        dispatch(setOnOpenProfile({
+            onOpenProfile: true,
         }))
     }
     // Handle sending message
@@ -57,12 +67,12 @@ function ProfileModal({loading}) {
                 {loading?<SmallLoader/>:
                 <>
                     <div className="profile-card__header">
-                        <div role="button" data-bs-dismiss="modal" onClick={openSecondView} className="profile-card__picture" style = {{backgroundImage: `url(${photoURL})`}}>
+                        <div role="button" data-bs-dismiss="modal" onClick={openProfile} className="profile-card__picture" style = {{backgroundImage: `url(${photoURL})`}}>
 
                         </div>
                     </div>
                     <div className="profile-card__name">
-                        <div className="profile-card__name__title" role="button" onClick={openSecondView} data-bs-dismiss="modal">
+                        <div className="profile-card__name__title" role="button" onClick={openProfile} data-bs-dismiss="modal">
                             {displayName}
                         </div>
                         <div className={isOnline?"profile-card__name__status online": "profile-card__name__status"}>
@@ -70,7 +80,7 @@ function ProfileModal({loading}) {
                         </div>
                     </div>
 
-                    <div className="profile-card__link" role="button" onClick={openSecondView} data-bs-dismiss="modal" data-bs-target=".editChat">
+                    <div className="profile-card__link" role="button" onClick={openProfile} data-bs-dismiss="modal" data-bs-target=".editChat">
                         View full profile
                     </div>
 

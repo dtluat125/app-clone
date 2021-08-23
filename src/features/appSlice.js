@@ -22,9 +22,29 @@ export const appSlice = createSlice({
         savedItemId: null,
         onSendingReaction: false,
         onReplyInThread: null,
-        threadMessageId: null
+        threadMessageId: null,
+        threadMessageRoomId: null,
+        threadMessageDirectId: null,
+        onOpenProfile: null,
+        onSave: null,
+        onMainSave: null,
     },
     reducers: {
+        setOnMainSave: (state, action) => {
+            state.onMainSave = action.payload.onMainSave
+        },
+        setOnSave: (state, action) => {
+            state.onSave = action.payload.onSave
+        },
+        setOnOpenProfile: (state, action) => {
+            state.onOpenProfile = action.payload.onOpenProfile;
+        },
+        setThreadMessageRoomId: (state, action) => {
+            state.threadMessageRoomId = action.payload.threadMessageRoomId
+        },
+        setThreadMessageDirectId: (state, action) => {
+            state.threadMessageDirectId = action.payload.threadMessageDirectId
+        },
         setThreadMessageId: (state, action) => {
             state.threadMessageId = action.payload.threadMessageId
         },
@@ -108,7 +128,17 @@ export const appSlice = createSlice({
      }
 });
 
-export const {setThreadMessageId, setOnReplyInThread,setOnSendingReaction,setSavedItemId,setSavedItemsToggle,setMoves, setIsModalOpen, setDirectUser, setRoomDetails, setTime, sendMessage, setSelectedUser, showSecondaryWorkspace,enterRoom, saveUserInfo, docUserId, reset, getDataState, enterDirectMessage, setUserProfileUid} = appSlice.actions;
+export const {setOnMainSave, setOnSave, setOnOpenProfile,setThreadMessageRoomId, setThreadMessageDirectId,setThreadMessageId, setOnReplyInThread,setOnSendingReaction,setSavedItemId,setSavedItemsToggle,setMoves, setIsModalOpen, setDirectUser, setRoomDetails, setTime, sendMessage, setSelectedUser, showSecondaryWorkspace,enterRoom, saveUserInfo, docUserId, reset, getDataState, enterDirectMessage, setUserProfileUid} = appSlice.actions;
+
+export const selectOnMainSave = state => state.app.onMainSave;
+
+export const selectOnSave = state => state.app.onSave;
+
+export const selectOnOpenProfile = state => state.app.onOpenProfile;
+
+export const selectThreadMessageRoomId = state => state.app.threadMessageRoomId;
+
+export const selectThreadMessageDirectId = state => state.app.threadMessageDirectId;
 
 export const selectThreadMessageId = state => state.app.threadMessageId;
 

@@ -9,14 +9,20 @@ import {
   selectSavedItemId,
   selectSavedItemsToggle,
   selectSecondaryWorkspaceStatus,
+  selectThreadMessageDirectId,
+  selectThreadMessageRoomId,
   selectUser,
   selectUserProfileUid,
+  setOnOpenProfile,
   setOnReplyInThread,
+  setOnSave,
   setOnSendingReaction,
   setSavedItemId,
   setSavedItemsToggle,
   setSelectedUser,
+  setThreadMessageDirectId,
   setThreadMessageId,
+  setThreadMessageRoomId,
   setTime,
   setUserProfileUid,
   showSecondaryWorkspace,
@@ -30,7 +36,9 @@ import TurnedInNotOutlinedIcon from "@material-ui/icons/TurnedInNotOutlined";
 import TurnedInIcon from "@material-ui/icons/TurnedIn";
 import Reaction from "./Reaction";
 import firebase from "firebase";
+import KeyboardReturnIcon from "@material-ui/icons/KeyboardReturn";
 import { useRef } from "react";
+import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
 const Message = React.forwardRef(
   (
     {
@@ -52,6 +60,7 @@ const Message = React.forwardRef(
       inThread,
       messageRoomId,
       messageRoomDirectId,
+      replyTo,
     },
     ref
   ) => {
@@ -60,6 +69,26 @@ const Message = React.forwardRef(
     const [onHover, setOnHover] = useState(false);
     const roomId = useSelector(selectRoomId);
     const directId = useSelector(selectDirectMessageRoom);
+    const [subMessages] = useCollection(
+      id &&
+        (roomId
+          ? db
+              .collection("room")
+              .doc(roomId)
+              .collection("messages")
+              .doc(id)
+              .collection("subMessages")
+              .orderBy("timestamp", "asc")
+          : directId
+          ? db
+              .collection("directRooms")
+              .doc(directId)
+              .collection("messages")
+              .doc(id)
+              .collection("subMessages")
+              .orderBy("timestamp", "asc")
+          : undefined)
+    );
     // Save selected user Info
     const [users, loading] = useCollection(db.collection("users"));
     const userUid = useSelector(selectUserProfileUid);
@@ -77,16 +106,16 @@ const Message = React.forwardRef(
       minutes = "0" + minutes;
     }
     var localTime = hours + ":" + minutes + " ";
+    var timeWithDate = "";
+    console.log(date + month);
     const [onSendingUid, setOnSendingUid] = useState(false);
     //
     // Open emojimart for each message
-
     const [position, setPosition] = useState(null);
     const elementId = isSaved ? "aa" + id : inThread ? "aaa" + id : "a" + id;
-    const tempId = "a" + id;
     const openMovingEmojiMart = () => {
       const chatMessage = document.querySelector("#" + elementId);
-      
+
       const positionInfo = chatMessage.getBoundingClientRect();
       setPosition(positionInfo);
       onClick({ positionInfo, id });
@@ -160,13 +189,19 @@ const Message = React.forwardRef(
         })
       );
       dispatch(
-        setOnReplyInThread({
-          onReplyInThread: true,
+        setOnSave({
+          onSave: null,
+        })
+      );
+
+      dispatch(
+        setOnOpenProfile({
+          onOpenProfile: null,
         })
       );
       dispatch(
-        setSelectedUser({
-          selectedUser: null,
+        setOnReplyInThread({
+          onReplyInThread: true,
         })
       );
       dispatch(
@@ -174,8 +209,20 @@ const Message = React.forwardRef(
           threadMessageId: id,
         })
       );
+      dispatch(
+        setThreadMessageRoomId({
+          threadMessageRoomId: roomId,
+        })
+      );
+      dispatch(
+        setThreadMessageDirectId({
+          threadMessageDirectId: directId,
+        })
+      );
     };
     const shareMessage = () => {};
+    const threadMessageRoomId = useSelector(selectThreadMessageRoomId);
+    const threadMessageDirectId = useSelector(selectThreadMessageDirectId);
     // Save item
     const savedItemsToggle = useSelector(selectSavedItemsToggle);
     const saveItem = async () => {
@@ -188,32 +235,96 @@ const Message = React.forwardRef(
       if (id) {
         if (!savedBy || !savedBy.includes(docUserId)) {
           savedByArr.push(docUserId);
-          db.collection("users")
-            .doc(docUserId)
-            .collection("savedItems")
-            .add({
-              messageId: id ? id : null,
-              roomId: roomId ? roomId : null,
-              roomDirectId: directId ? directId : null,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            });
+          if (replyTo) {
+            db.collection("users")
+              .doc(docUserId)
+              .collection("savedItems")
+              .add({
+                messageId: id ? id : null,
+                roomId: threadMessageRoomId ? threadMessageRoomId : null,
+                roomDirectId: threadMessageDirectId
+                  ? threadMessageDirectId
+                  : null,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                replyTo: replyTo,
+              });
+            if (threadMessageRoomId) {
+              db.collection("room")
+                .doc(threadMessageRoomId)
+                .collection("messages")
+                .doc(replyTo)
+                .collection("subMessages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            } else if (threadMessageDirectId) {
+              db.collection("directRooms")
+                .doc(threadMessageDirectId)
+                .collection("messages")
+                .doc(replyTo)
+                .collection("subMessages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            }
+          } else if (inThread) {
+            db.collection("users")
+              .doc(docUserId)
+              .collection("savedItems")
+              .add({
+                messageId: id ? id : null,
+                roomId: threadMessageRoomId ? threadMessageRoomId : null,
+                roomDirectId: threadMessageDirectId ? directId : null,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              });
 
-          if (roomId) {
-            db.collection("room")
-              .doc(roomId)
-              .collection("messages")
-              .doc(id)
-              .update({
-                savedBy: savedByArr,
+            if (threadMessageRoomId) {
+              db.collection("room")
+                .doc(threadMessageRoomId)
+                .collection("messages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            } else if (threadMessageDirectId) {
+              db.collection("directRooms")
+                .doc(threadMessageDirectId)
+                .collection("messages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            }
+          } else {
+            db.collection("users")
+              .doc(docUserId)
+              .collection("savedItems")
+              .add({
+                messageId: id ? id : null,
+                roomId: roomId ? roomId : null,
+                roomDirectId: directId ? directId : null,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               });
-          } else if (directId) {
-            db.collection("directRooms")
-              .doc(directId)
-              .collection("messages")
-              .doc(id)
-              .update({
-                savedBy: savedByArr,
-              });
+
+            if (roomId) {
+              db.collection("room")
+                .doc(roomId)
+                .collection("messages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            } else if (directId) {
+              db.collection("directRooms")
+                .doc(directId)
+                .collection("messages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            }
           }
         } else {
           let i = savedByArr.indexOf(docUserId);
@@ -236,7 +347,48 @@ const Message = React.forwardRef(
               .delete()
               .then(() => console.log("Delete!"))
               .catch((err) => console.log(err.message));
-          if (roomId) {
+
+          if (replyTo) {
+            if (threadMessageRoomId) {
+              db.collection("room")
+                .doc(threadMessageRoomId)
+                .collection("messages")
+                .doc(replyTo)
+                .collection("subMessages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            } else if (threadMessageDirectId) {
+              db.collection("directRooms")
+                .doc(threadMessageDirectId)
+                .collection("messages")
+                .doc(replyTo)
+                .collection("subMessages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            }
+          } else if (inThread) {
+            if (threadMessageRoomId) {
+              db.collection("room")
+                .doc(threadMessageRoomId)
+                .collection("messages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            } else if (threadMessageDirectId) {
+              db.collection("directRooms")
+                .doc(threadMessageDirectId)
+                .collection("messages")
+                .doc(id)
+                .update({
+                  savedBy: savedByArr,
+                });
+            }
+          } else if (roomId) {
             db.collection("room")
               .doc(roomId)
               .collection("messages")
@@ -257,6 +409,7 @@ const Message = React.forwardRef(
       } else return;
     };
     // Send reaction to db
+
     const sendReaction = (emoji) => {
       dispatch(
         setOnSendingReaction({
@@ -308,7 +461,47 @@ const Message = React.forwardRef(
             count: count + 1,
           });
         }
-        if (directId) {
+        if (inThread) {
+          if (threadMessageDirectId)
+            db.collection("directRooms")
+              .doc(threadMessageDirectId)
+              .collection("messages")
+              .doc(id)
+              .update({
+                reactions: reactionsArr,
+              });
+          else if (threadMessageRoomId) {
+            db.collection("room")
+              .doc(threadMessageRoomId)
+              .collection("messages")
+              .doc(id)
+              .update({
+                reactions: reactionsArr,
+              });
+          }
+        } else if (replyTo) {
+          if (threadMessageDirectId)
+            db.collection("directRooms")
+              .doc(threadMessageDirectId)
+              .collection("messages")
+              .doc(replyTo)
+              .collection("subMessages")
+              .doc(id)
+              .update({
+                reactions: reactionsArr,
+              });
+          else if (threadMessageRoomId) {
+            db.collection("room")
+              .doc(threadMessageRoomId)
+              .collection("messages")
+              .doc(replyTo)
+              .collection("subMessages")
+              .doc(id)
+              .update({
+                reactions: reactionsArr,
+              });
+          }
+        } else if (directId) {
           console.log(id);
           db.collection("directRooms")
             .doc(directId)
@@ -357,6 +550,16 @@ const Message = React.forwardRef(
     // Ref
     const actionRef = useRef(null);
 
+    // Move to channel button
+    const moveToChannel = () => {};
+    // Thread hover
+    const [onThreadHover, setOnThreadHover] = useState(false);
+    const onThreadHoverHandler = () => {
+      setOnThreadHover(true);
+    };
+    const notOnThreadHoverHandler = () => {
+      setOnThreadHover(false);
+    };
     return (
       <div
         ref={ref}
@@ -423,6 +626,57 @@ const Message = React.forwardRef(
                       })
                     : ""}
                 </div>
+                {subMessages?.docs.length > 0 && !inThread && (
+                  <div
+                    className="message__thread-button"
+                    onMouseOver={onThreadHoverHandler}
+                    onMouseOut={notOnThreadHoverHandler}
+                  >
+                    <div
+                      className="message__thread-avatar"
+                      style={{
+                        backgroundImage: `url(${
+                          subMessages.docs[subMessages.docs.length - 1].data()
+                            .userImage
+                        })`,
+                      }}
+                      alt=""
+                      role="button"
+                      onClick={
+                        subMessages.docs[subMessages.docs.length - 1].data().uid
+                          ? sendUserUid
+                          : doNothing
+                      }
+                      data-bs-toggle={uid ? "modal" : "false"}
+                      data-bs-target="#profileModal"
+                    ></div>
+                    <div
+                      className="message__thread-count"
+                      onClick={replyInThread}
+                    >
+                      {subMessages?.docs.length > 1
+                        ? subMessages?.docs.length + " replies"
+                        : subMessages?.docs.length + " reply"}
+                    </div>
+                    <div
+                      className="message__thread-description"
+                      onClick={replyInThread}
+                    >
+                      {!onThreadHover ? (
+                        <span className="message__thread-description__content">
+                          Last reply
+                        </span>
+                      ) : (
+                        <>
+                          <span className="message__thread-description__content">
+                            View thread
+                          </span>
+                          <ArrowForwardIosRoundedIcon className="message__bar-arrow" />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -433,7 +687,7 @@ const Message = React.forwardRef(
               }
             >
               <div className="c-message__action__group">
-                {!isSaved && (
+                {!isSaved && !replyTo && !inThread && (
                   <>
                     <ActionButton
                       action={sendReaction}
@@ -458,16 +712,25 @@ const Message = React.forwardRef(
                   emoji={<InsertEmoticonIcon />}
                   title="Find a reaction"
                 />
-                <ActionButton
-                  action={replyInThread}
-                  emoji={<ReplyIcon />}
-                  title="Reply in thread"
-                />
-                <ActionButton
+                {inThread && (
+                  <ActionButton
+                    action={moveToChannel}
+                    emoji={<KeyboardReturnIcon />}
+                    title="View in channel"
+                  />
+                )}
+                {!replyTo && !inThread && (
+                  <ActionButton
+                    action={replyInThread}
+                    emoji={<ReplyIcon />}
+                    title="Reply in thread"
+                  />
+                )}
+                {/* <ActionButton
                   action={shareMessage}
                   emoji={<ForwardOutlinedIcon />}
                   title="Share message"
-                />
+                /> */}
                 <ActionButton
                   action={saveItem}
                   emoji={

@@ -5,11 +5,15 @@ import {
   enterRoom,
   selectDirectMessageRoom,
   selectMoves,
+  selectOnSave,
   selectRoomId,
   selectUser,
   selectUserDirect,
   setMoves,
+  setOnMainSave,
+  setOnOpenProfile,
   setOnReplyInThread,
+  setOnSave,
   setSelectedUser,
   setUserProfileUid,
   showSecondaryWorkspace,
@@ -74,6 +78,9 @@ function SidebarOption({
     }
   };
   const selectChannel = () => {
+    dispatch(setOnMainSave({
+      onMainSave: null
+    }))
     let usersHaveReadArr = usersHaveReadRoom?usersHaveReadRoom.slice():[];
     if (id) {
       if(!usersHaveReadArr.includes(user.uid)){
@@ -97,6 +104,9 @@ function SidebarOption({
     }
   };
   const selectPerson = () => {
+    dispatch(setOnMainSave({
+      onMainSave: null
+    }))
     setToggle(true);
     dispatch(
       enterRoom({
@@ -152,16 +162,17 @@ function SidebarOption({
   }, [roomId, directMessageUid]);
 
   // Go to saved Items
-  
+
+
   const gotoSavedItems = () => {
     dispatch(showSecondaryWorkspace({
       isShowingSecondaryWorkspace: true
     }))
-    dispatch(setUserProfileUid({
-      userUid: null
+    dispatch(setOnSave({
+      onSave: true
     }))
-    dispatch(setSelectedUser({
-      selectedUser: null
+    dispatch(setOnOpenProfile({
+      onOpenProfile: null
     }))
     dispatch(setOnReplyInThread({
       onReplyInThread: null
