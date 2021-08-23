@@ -61,6 +61,7 @@ const Message = React.forwardRef(
       messageRoomId,
       messageRoomDirectId,
       replyTo,
+      inMainSave
     },
     ref
   ) => {
@@ -564,11 +565,11 @@ const Message = React.forwardRef(
       <div
         ref={ref}
         className={
-          onHover
+          (onHover&&!inMainSave)
             ? savedBy?.includes(docUserId)
               ? "message-container active saved"
               : "message-container active"
-            : savedBy?.includes(docUserId)
+            : (savedBy?.includes(docUserId)&&!inMainSave)
             ? "message-container saved"
             : "message-container"
         }
@@ -576,7 +577,7 @@ const Message = React.forwardRef(
         onMouseOut={notHoverHandler}
         id={elementId}
       >
-        {savedBy?.includes(docUserId) && (
+        {(savedBy?.includes(docUserId)&&!inMainSave) && (
           <div className="message__label">
             <div className="message__label__icon">{<TurnedInIcon />}</div>
             <div role="button" className="message__label__content">
@@ -626,7 +627,7 @@ const Message = React.forwardRef(
                       })
                     : ""}
                 </div>
-                {subMessages?.docs.length > 0 && !inThread && (
+                {subMessages?.docs.length > 0 && !inThread &&!inMainSave&& (
                   <div
                     className="message__thread-button"
                     onMouseOver={onThreadHoverHandler}

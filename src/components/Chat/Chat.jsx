@@ -353,6 +353,8 @@ function Chat(props) {
   //
   console.log(position);
 // Save main page
+const onMainSave = useSelector(selectOnMainSave);
+ 
   return (
     <div className="chat-container">
       {loading || directLoading || usersLoading ? (

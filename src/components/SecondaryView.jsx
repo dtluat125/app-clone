@@ -126,11 +126,6 @@ function SecondaryView({ width, resize }) {
   };
   const [savedMessages, setSavedMessages] = useState(null);
 
-  const [savedMessageLoading, setSaveMessageLoading] = useState(false);
-  // Get saved Items
-  const onSendingReaction = useSelector(selectOnSendingReaction);
-  let savedItemsArr = [];
-
   const getSavedMessages = () => {
     let arr = savedItemsInfo?.docs.map(async (doc) => {
       const messageId = doc.data().messageId;
@@ -169,17 +164,7 @@ function SecondaryView({ width, resize }) {
           .doc(messageId)
           .get();
       }
-      // const { message, timestamp, user, userImage, uid, savedBy } =
-      //   messageRef.data();
-      // const time = new Date(timestamp?.toDate());
-      // var date = time.getDate();
-      // var year = time.getFullYear();
-      // var month = time.getMonth();
-      // var hours = time.getHours();
-      // var minutes = time.getMinutes();
-      // if (minutes < 10) {
-      //   minutes = "0" + minutes;
-      // }
+
       return messageRef;
     });
     return arr;
@@ -326,27 +311,22 @@ function SecondaryView({ width, resize }) {
           else return userInf.uid !== user.uid;
         })?.displayName
       : undefined);
-// Open main save page
-const openSavePage = () => {
-  dispatch(setOnMainSave({
-    onMainSave: true
-  }))
-  closeWorkspace()
-  dispatch(enterRoom({
-    roomId: null
-  }))
-  dispatch(enterDirectMessage({
-    directMessageRoomId: null,
-    directMessageUid: null
-  }))
-
-  
-}
-const onMainSave = useSelector(selectOnMainSave)
+  // Open main save page
+  const openSavePage = () => {
+    dispatch(
+      setOnMainSave({
+        onMainSave: true,
+      })
+    );
+    closeWorkspace();
+  };
+  const onMainSave = useSelector(selectOnMainSave);
   return (
     <div
       className={
-        (isOpen&&!(onSave&&onMainSave)) ? "secondary-view-container active" : "secondary-view-container"
+        isOpen && !(onSave && onMainSave)
+          ? "secondary-view-container active"
+          : "secondary-view-container"
       }
       style={{ width: width }}
     >
@@ -384,7 +364,11 @@ const onMainSave = useSelector(selectOnMainSave)
         </div>
         <div className="secondary-view__header__right">
           {onSave && (
-            <button className="c-button-unstyled close-button" title="Move to main page" onClick={openSavePage}>
+            <button
+              className="c-button-unstyled close-button"
+              title="Move to main page"
+              onClick={openSavePage}
+            >
               <AspectRatioRoundedIcon />
             </button>
           )}
