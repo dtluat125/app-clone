@@ -195,7 +195,11 @@ function MainSave() {
 
   // Move to message
 
-  const moveToMessage = (info) => {
+  const moveToMessage = (info, e) => {
+    const mainSaveItemInner = document.querySelector(".main-save__item__inner");
+    console.log(e.target)
+    if (e.target != mainSaveItemInner) return;
+    console.log(e.target)
     if (info.savedMessageInfo) {
       dispatch(
         setOnMainSave({
@@ -418,7 +422,6 @@ function MainSave() {
           <SmallLoader />
         ) : (
           <>
-
             {savedMessages?.map((doc) => {
               let savedMessageInfo = savedItemsInfo?.docs.find((docc) => {
                 if (docc.data().replyTo) return docc.data().replyTo === doc.id;
@@ -459,11 +462,15 @@ function MainSave() {
                     <div
                       className="main-save__item__inner"
                       role="button"
-                      onClick={() => moveToMessage(info)}
+                      onClick={(e) => moveToMessage(info, e)}
                     >
-                      <div className="saved-message__header">{name}</div>
+                      <div
+                        className="saved-message__header"
+                        onClick={(e) => moveToMessage(info, e)}
+                      >
+                        {name}
+                      </div>
                       <Message
-                        moveToItem={() => moveToMessage(info)}
                         emojiMartPosition={position}
                         onClick={openEmojiMart}
                         key={doc.id}
